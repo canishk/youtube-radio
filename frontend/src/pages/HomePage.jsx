@@ -4,12 +4,21 @@ import api from "../services/api";
 
 import CategoryCard from "../components/CategoryCard";
 import RadioPlayer from "../components/RadioPlayer";
+import { usePlayer } from "../context/PlayerContext";
 
 function HomePage() {
-
   const [categories, setCategories] = useState([]);
+  const {
+    currentSong,
+    setCurrentSong,
 
-  const [currentVideoId, setCurrentVideoId] = useState(null);
+    currentCategory,
+    setCurrentCategory,
+
+    isPlaying,
+    setIsPlaying
+
+  } = usePlayer();
 
   useEffect(() => {
     fetchCategories();
@@ -32,14 +41,14 @@ function HomePage() {
   async function handleSelectCategory(category) {
 
     try {
-
       const response = await api.get(
         `/stream/${category.id}`
       );
 
-      setCurrentVideoId(
-        response.data.youtube_video_id
-      );
+      // setCurrentVideoId(response.data.youtube_video_id);
+      setCurrentCategory(category.name);
+      setCurrentSong(response.data);
+      setIsPlaying(true)
 
     } catch (error) {
 
@@ -72,10 +81,8 @@ function HomePage() {
         ))}
       </div>
 
-      {currentVideoId && (
-        <RadioPlayer
-          videoId={currentVideoId}
-        />
+      {currentSong && (
+        <RadioPlayer />
       )}
 
     </div>
