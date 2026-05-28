@@ -5,14 +5,14 @@ const recentlyPlayed = [];
 export async function fetchNextSong(
   categoryId
 ) {
-
+  const hour = new Date().getHours();
   try {
 
     for (let i = 0; i < 5; i++) {
 
       const response =
         await api.get(
-          `/stream/${categoryId}`
+          `/stream/${categoryId}?hour=${hour}`
         );
 
       const song =
