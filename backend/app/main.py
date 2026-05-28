@@ -10,8 +10,11 @@ from app.models.playback_history import PlaybackHistory
 
 from app.db.session import SessionLocal
 from app.services.seed_service import seed_categories
+from app.services.song_seed_service import seed_songs
 
 from app.api.category_routes import router as category_router
+from app.api.song_routes import router as song_router
+
 
 
 load_dotenv()
@@ -20,6 +23,7 @@ Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 seed_categories(db)
+seed_songs(db)
 db.close()
 
 app = FastAPI(title=os.getenv("APP_NAME"), version=os.getenv("API_VERSION"))
@@ -46,3 +50,4 @@ async def health_check():
     return {"status": "healthy"}
 
 app.include_router(category_router)
+app.include_router(song_router)

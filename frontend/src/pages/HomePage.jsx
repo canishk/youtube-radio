@@ -1,32 +1,55 @@
 import { useEffect, useState } from "react";
 
 import api from "../services/api";
+
 import CategoryCard from "../components/CategoryCard";
+import RadioPlayer from "../components/RadioPlayer";
 
 function HomePage() {
+
   const [categories, setCategories] = useState([]);
+
+  const [currentVideoId, setCurrentVideoId] = useState(null);
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
   async function fetchCategories() {
+
     try {
+
       const response = await api.get("/categories/");
 
       setCategories(response.data);
 
     } catch (error) {
-      console.error("Failed to load categories", error);
+
+      console.error(error);
     }
   }
 
-  function handleSelectCategory(category) {
-    console.log("Selected:", category);
+  async function handleSelectCategory(category) {
+
+    try {
+
+      const response = await api.get(
+        `/stream/${category.id}`
+      );
+
+      setCurrentVideoId(
+        response.data.youtube_video_id
+      );
+
+    } catch (error) {
+
+      console.error(error);
+    }
   }
 
   return (
     <div className="p-6">
+
       <h1 className="text-3xl font-bold mb-6">
         U-Tube Radio
       </h1>
@@ -48,6 +71,13 @@ function HomePage() {
           />
         ))}
       </div>
+
+      {currentVideoId && (
+        <RadioPlayer
+          videoId={currentVideoId}
+        />
+      )}
+
     </div>
   );
 }

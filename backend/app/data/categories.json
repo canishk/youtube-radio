@@ -7,16 +7,23 @@
     "auto_mode": "time-aware"
   },
   {
-    "id": "malayalam-melody",
+    "id": "malayalam-melodies",
     "name": "Malayalam Melody",
     "description": "Soft Malayalam melodies",
     "thumbnail": "",
     "auto_mode": "time-aware"
   },
   {
-    "id": "mohanlal-2ks",
-    "name": "2000 Mohanlal Hits",
+    "id": "mohanlal-90s",
+    "name": "90s Mohanlal Hits",
     "description":"Energetic Hits of Mohanlal",
+    "auto_mode":"time-aware",
+    "thumbnail":""
+  },
+  {
+    "id":"party-rock-english",
+    "name": "Party Rock - English",
+    "description":"Energetic Rock Songs",
     "auto_mode":"time-aware",
     "thumbnail":""
   }
