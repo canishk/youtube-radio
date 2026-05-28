@@ -1,0 +1,23 @@
+[
+  {
+    "id": "tamil-night",
+    "name": "Tamil Night Drive",
+    "description": "Late night Tamil melodies",
+    "thumbnail": "",
+    "auto_mode": "time-aware"
+  },
+  {
+    "id": "malayalam-melody",
+    "name": "Malayalam Melody",
+    "description": "Soft Malayalam melodies",
+    "thumbnail": "",
+    "auto_mode": "time-aware"
+  },
+  {
+    "id": "mohanlal-2ks",
+    "name": "2000 Mohanlal Hits",
+    "description":"Energetic Hits of Mohanlal",
+    "auto_mode":"time-aware",
+    "thumbnail":""
+  }
+]
