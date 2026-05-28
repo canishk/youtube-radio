@@ -11,21 +11,11 @@ export function PlayerProvider({
   children
 }) {
 
-  const [currentSong,
-    setCurrentSong] =
-    useState(null);
-
-  const [currentCategory,
-    setCurrentCategory] =
-    useState(null);
-
-  const [isPlaying,
-    setIsPlaying] =
-    useState(false);
-
-  const [volume,
-    setVolume] =
-    useState(50);
+  const [currentSong, setCurrentSong] = useState(null);
+  const [currentCategory, setCurrentCategory] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(50);
+  const [queue, setQueue] = useState([]);
 
   const value = {
 
@@ -40,6 +30,9 @@ export function PlayerProvider({
 
     volume,
     setVolume,
+
+    queue,
+    setQueue,
   };
 
   return (

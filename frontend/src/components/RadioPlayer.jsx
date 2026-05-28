@@ -3,12 +3,16 @@ import { useRef, useState } from "react";
 import YouTube from "react-youtube";
 
 import { usePlayer } from "../context/PlayerContext";
+import { fetchNextSong } from "../services/radioEngine";
 
 function RadioPlayer() {
+
+  const playerRef = useRef(null);
 
  const {
 
   currentSong,
+  setCurrentSong,
 
   currentCategory,
 
@@ -17,6 +21,9 @@ function RadioPlayer() {
 
   volume,
   setVolume,
+
+  queue,
+  setQueue,
 
 } = usePlayer();
 
@@ -63,6 +70,46 @@ function RadioPlayer() {
   if (!playerRef.current) return;
 
   playerRef.current.setVolume(newVolume);
+}
+
+  async function handleSongEnd() {
+
+    if (!currentCategory) return;
+
+    let nextSong = null;
+
+    if (queue.length > 0) {
+
+        nextSong = queue[0];
+
+        setQueue(
+        queue.slice(1)
+        );
+
+    } else {
+
+        nextSong =
+        await fetchNextSong(
+            currentCategory.id
+        );
+    }
+
+    if (!nextSong) return;
+
+    setCurrentSong(nextSong);
+
+    const additionalSong =
+        await fetchNextSong(
+        currentCategory.id
+        );
+
+    if (additionalSong) {
+
+        setQueue((previous) => [
+        ...previous,
+        additionalSong
+        ]);
+    }
 }
 
   const opts = {
@@ -175,6 +222,7 @@ function RadioPlayer() {
         videoId={currentSong.youtube_video_id}
         opts={opts}
         onReady={onReady}
+        onEnd={handleSongEnd}
       />
 
     </div>

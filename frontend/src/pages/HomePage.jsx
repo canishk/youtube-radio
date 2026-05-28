@@ -5,6 +5,7 @@ import api from "../services/api";
 import CategoryCard from "../components/CategoryCard";
 import RadioPlayer from "../components/RadioPlayer";
 import { usePlayer } from "../context/PlayerContext";
+import { fetchNextSong } from "../services/radioEngine";
 
 function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -16,7 +17,10 @@ function HomePage() {
     setCurrentCategory,
 
     isPlaying,
-    setIsPlaying
+    setIsPlaying,
+
+    queue,
+    setQueue,
 
   } = usePlayer();
 
@@ -41,14 +45,28 @@ function HomePage() {
   async function handleSelectCategory(category) {
 
     try {
-      const response = await api.get(
-        `/stream/${category.id}`
-      );
+      const song = await fetchNextSong(category.id)
 
       // setCurrentVideoId(response.data.youtube_video_id);
       setCurrentCategory(category.name);
-      setCurrentSong(response.data);
-      setIsPlaying(true)
+      setCurrentSong(song);
+      setIsPlaying(true);
+
+      const preloadSongs = [];
+      for (let i = 0; i < 3; i++) {
+
+        const nextSong =
+          await fetchNextSong(
+            category.id
+          );
+
+        if (nextSong) {
+          preloadSongs.push(nextSong);
+        }
+      }
+
+      setQueue(preloadSongs);
+
 
     } catch (error) {
 
