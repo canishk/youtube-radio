@@ -401,5 +401,106 @@
     "energy": 5,
     "time_slots": "night",
     "priority": 9
+  },
+
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "kzpS-A3QJqE",
+    "title": "Kaattuchembakam",
+    "movie": "Pallichattambi",
+    "moods": "romantic,melody,latest",
+    "energy": 3,
+    "time_slots": "evening,night",
+    "priority": 10
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "rPpoZ1iH3aA",
+    "title": "Ini Varumo",
+    "movie": "Drishyam 3",
+    "moods": "melody,emotional",
+    "energy": 2,
+    "time_slots": "night,late_night",
+    "priority": 9
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "5BQRTBu8QOY",
+    "title": "Paazha",
+    "movie": "Vaazha 2",
+    "moods": "upbeat,energetic",
+    "energy": 4,
+    "time_slots": "evening,party",
+    "priority": 8
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "RvoPR-XQ8lQ",
+    "title": "Thennal Thalodi",
+    "movie": "Revolver Rinko",
+    "moods": "melody,romantic",
+    "energy": 2,
+    "time_slots": "evening,night",
+    "priority": 8
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "NAkQVL61BRI",
+    "title": "Mayajaalame",
+    "movie": "Sarvam Maya",
+    "moods": "romantic,melody",
+    "energy": 3,
+    "time_slots": "night",
+    "priority": 9
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "Qh04w0kbU9w",
+    "title": "Mollywood Times",
+    "movie": "N/A",
+    "moods": "party,energetic",
+    "energy": 5,
+    "time_slots": "night,late_night",
+    "priority": 8
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "2I-VEekIrQU",
+    "title": "Mizhiyilaaranu",
+    "movie": "N/A",
+    "moods": "melody,romantic",
+    "energy": 2,
+    "time_slots": "evening,night",
+    "priority": 7
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "KfDy0lI1sBw",
+    "title": "Minnalvala",
+    "movie": "N/A",
+    "moods": "romantic,feel-good",
+    "energy": 3,
+    "time_slots": "evening,night",
+    "priority": 8
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "GrVBFRl4O28",
+    "title": "Pranayaalole Baale",
+    "movie": "Madura Kanakku",
+    "moods": "romantic,melody",
+    "energy": 2,
+    "time_slots": "night",
+    "priority": 7
+  },
+  {
+    "category_id": "latest-malayalam-2026",
+    "youtube_video_id": "GbVrFutqIro",
+    "title": "Best of 2025 Romantic Hits",
+    "movie": "Various",
+    "moods": "romantic,melody",
+    "energy": 2,
+    "time_slots": "evening,night",
+    "priority": 8
   }
 ]

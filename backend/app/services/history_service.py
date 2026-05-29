@@ -4,10 +4,12 @@ from app.models.playback_history import PlaybackHistory
 
 def log_playback(
         db,
+        session_id,
         category_id,
         youtube_video_id
 ):
     history = PlaybackHistory(
+        session_id=session_id,
         category_id=category_id,
         youtube_video_id=youtube_video_id,
         played_at=datetime.utcnow()
@@ -15,9 +17,11 @@ def log_playback(
     db.add(history)
     db.commit()
 
-def get_recently_played(db, category_id, limit=10):
+def get_recently_played(db, session_id, category_id, limit=10):
     history = db.query(
         PlaybackHistory
+    ).filter(
+        PlaybackHistory.session_id == session_id
     ).filter(
         PlaybackHistory.category_id == category_id
     ).order_by(

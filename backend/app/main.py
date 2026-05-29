@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 import os
 
+from app.core.scheduler import start_scheduler
 from app.db.database import engine, Base
 from app.models.category import Category
 from app.models.song import Song
 from app.models.playback_history import PlaybackHistory
+from app.models.session import Session
 
 from app.db.session import SessionLocal
 from app.services.seed_service import seed_categories
@@ -26,7 +29,12 @@ seed_categories(db)
 seed_songs(db)
 db.close()
 
-app = FastAPI(title=os.getenv("APP_NAME"), version=os.getenv("API_VERSION"))
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    start_scheduler()
+    yield
+
+app = FastAPI(title=os.getenv("APP_NAME"), version=os.getenv("API_VERSION"), lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

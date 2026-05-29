@@ -26,5 +26,12 @@
     "description":"Energetic Rock Songs",
     "auto_mode":"time-aware",
     "thumbnail":""
+  },
+  {
+    "id": "latest-malayalam-2026",
+    "name": "Malayalam Hits - 2026",
+    "description": "2026 Malayalam Hit Songs",
+    "thumbnail": "",
+    "auto_mode": "time-aware"
   }
 ]
