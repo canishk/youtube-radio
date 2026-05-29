@@ -3,12 +3,19 @@ from sqlalchemy.orm import Session
 
 from app.models.song import Song
 
+from app.services.history_service import get_recently_played
+
+
 def select_weighted_song(
         songs,
-        time_bucket
+        time_bucket,
+        recently_played
 ):
     weighted_pool = []
-    for song in songs:
+    filtered_songs = [song for song in songs if song.youtube_video_id not in recently_played]
+    if not filtered_songs:
+        filtered_songs = songs
+    for song in filtered_songs:
         weight = 1
         time_slots = song.time_slots or "".split(",")
         moods = song.moods or "".split(",")
