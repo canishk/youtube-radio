@@ -12,3 +12,10 @@ def register_session(db, session_id: str):
     db.add(session)
     db.commit()
     return session
+
+def update_last_category(db, session_id: str, category_id: str):
+    session = db.query(Session).filter(Session.session_id == session_id).first()
+    if session:
+        session.last_category = category_id
+        session.last_seen_at = datetime.utcnow()
+        db.commit()

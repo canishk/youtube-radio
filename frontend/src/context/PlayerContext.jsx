@@ -4,8 +4,7 @@ import {
   useState,
 } from "react";
 
-const PlayerContext =
-  createContext();
+const PlayerContext = createContext();
 
 export function PlayerProvider({
   children
@@ -16,6 +15,7 @@ export function PlayerProvider({
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(50);
   const [queue, setQueue] = useState([]);
+  const [playbackStatus, setPlaybackStatus] = useState("stopped");
 
   const value = {
 

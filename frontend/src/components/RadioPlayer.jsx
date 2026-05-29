@@ -25,12 +25,16 @@ function RadioPlayer() {
   queue,
   setQueue,
 
+  playbackStatus,
+  setPlaybackStatus,
+
 } = usePlayer();
 
   function onReady(event) {
 
     playerRef.current = event.target;
     event.target.setVolume(volume);
+    setPlaybackStatus("playing");
   }
 
   function handlePause() {
@@ -40,6 +44,7 @@ function RadioPlayer() {
     playerRef.current.pauseVideo();
 
     setIsPlaying(false);
+    setPlaybackStatus("paused");
   }
 
   function handleResume() {
@@ -49,6 +54,7 @@ function RadioPlayer() {
     playerRef.current.playVideo();
 
     setIsPlaying(true);
+    setPlaybackStatus("playing");
   }
 
   function handleStop() {
@@ -58,6 +64,7 @@ function RadioPlayer() {
     playerRef.current.stopVideo();
 
     setIsPlaying(false);
+    setPlaybackStatus("stopped");
   }
 
   function handleVolumeChange(event) {
@@ -144,16 +151,47 @@ function RadioPlayer() {
         "
       >
 
-        <div>
-          {/* <p className="text-sm text-slate-400">
-            Now Playing
-          </p> */}
+        <div className="flex items-center gap-4">
 
-          <h3 className="font-semibold">
-            {currentCategory?.name}
-          </h3>
-          <p className="text-sm text-slate-400">{currentSong?.title}</p>
-          <p className="text-xs text-slate-500">{currentSong?.movie}</p>
+          {currentSong?.thumbnail && (
+            <img
+              src={currentSong.thumbnail}
+              alt={currentSong.title}
+              className="
+                w-20
+                h-20
+                rounded-lg
+                object-cover
+              "
+            />
+          )}
+
+          <div>
+
+            <h3 className="font-semibold text-lg">
+              {currentSong?.title}
+            </h3>
+
+            <p className="text-slate-400 text-sm">
+              {currentSong?.movie}
+            </p>
+
+            <span
+              className="
+                inline-block
+                mt-2
+                bg-red-600
+                px-3
+                py-1
+                rounded-full
+                text-xs
+              "
+            >
+              {currentCategory?.name}
+            </span>
+            {/* <p className="text-xs text-slate-500 mt-2">Status: {playbackStatus}</p> */}
+          </div>
+
         </div>
 
         <div className="flex items-center gap-4">

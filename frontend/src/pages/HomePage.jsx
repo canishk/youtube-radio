@@ -9,6 +9,7 @@ import { fetchNextSong } from "../services/radioEngine";
 
 function HomePage() {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const {
     currentSong,
     setCurrentSong,
@@ -45,6 +46,7 @@ function HomePage() {
   async function handleSelectCategory(category) {
 
     try {
+      setLoading(true);
       const song = await fetchNextSong(category.id)
 
       // setCurrentVideoId(response.data.youtube_video_id);
@@ -67,10 +69,11 @@ function HomePage() {
 
       setQueue(preloadSongs);
 
-
     } catch (error) {
 
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
