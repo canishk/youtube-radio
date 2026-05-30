@@ -288,13 +288,16 @@ async function handlePlayerError(
         </div>
       </div>
 
-      <YouTube
-        videoId={currentSong.youtube_video_id}
-        opts={opts}
-        onReady={onReady}
-        onEnd={handleSongEnd}
-        onError={handlePlayerError}
-      />
+      {currentSong && (
+        <YouTube
+          key={currentSong.youtube_video_id}
+          videoId={currentSong.youtube_video_id}
+          opts={opts}
+          onReady={onReady}
+          onEnd={handleSongEnd}
+          onError={handlePlayerError}
+        />
+      )}
 
     </div>
   );

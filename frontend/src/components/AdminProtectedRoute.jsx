@@ -13,7 +13,7 @@ function AdminProtectedRoute({
 
     return (
       <Navigate
-        to="/admin"
+        to="/"
         replace
       />
     );
