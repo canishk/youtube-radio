@@ -33,6 +33,9 @@ export function PlayerProvider({
 
     queue,
     setQueue,
+
+    playbackStatus,
+    setPlaybackStatus,
   };
 
   return (

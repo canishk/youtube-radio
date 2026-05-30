@@ -81,7 +81,8 @@ function RadioPlayer() {
 
   async function handleSongEnd() {
 
-    if (!currentCategory) return;
+    const categoryId = currentCategory?.id ?? currentCategory;
+    if (!categoryId) return;
 
     let nextSong = null;
 
@@ -97,7 +98,7 @@ function RadioPlayer() {
 
         nextSong =
         await fetchNextSong(
-            currentCategory.id
+            categoryId
         );
     }
 
@@ -107,7 +108,7 @@ function RadioPlayer() {
 
     const additionalSong =
         await fetchNextSong(
-        currentCategory.id
+        categoryId
         );
 
     if (additionalSong) {
@@ -118,6 +119,37 @@ function RadioPlayer() {
         ]);
     }
 }
+
+async function handlePlayerError(
+      event
+    ) {
+
+      console.error(
+        "YouTube playback error",
+        event.data
+      );
+
+      try {
+
+        await api.post(
+          "/video/failure",
+          {
+            youtube_video_id:
+              currentSong
+                .youtube_video_id,
+
+            reason:
+              `youtube_error_${event.data}`
+          }
+        );
+
+      } catch (error) {
+
+        console.error(error);
+      }
+
+      await handleSongEnd();
+    }
 
   const opts = {
 
@@ -261,6 +293,7 @@ function RadioPlayer() {
         opts={opts}
         onReady={onReady}
         onEnd={handleSongEnd}
+        onError={handlePlayerError}
       />
 
     </div>

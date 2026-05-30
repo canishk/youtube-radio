@@ -1,21 +1,31 @@
 import random
 from sqlalchemy.orm import Session
-
 from app.models.song import Song
+from app.models.video_health import VideoHealth
+
 
 from app.services.history_service import get_recently_played
 
+def check_playability(youtube_video_id: str, db: Session) -> bool:
+    video_health = db.query(VideoHealth).filter(VideoHealth.youtube_video_id == youtube_video_id).first()
+    if video_health and video_health.is_playable is False:
+        return False
+    return True
+
 
 def select_weighted_song(
-        songs,
-        time_bucket,
-        recently_played
+    songs,
+    time_bucket,
+    recently_played,
+    db: Session,
 ):
     weighted_pool = []
     filtered_songs = [song for song in songs if song.youtube_video_id not in recently_played]
     if not filtered_songs:
         filtered_songs = songs
     for song in filtered_songs:
+        if not check_playability(song.youtube_video_id, db):
+            continue
         weight = 1
         time_slots = song.time_slots or "".split(",")
         moods = song.moods or "".split(",")

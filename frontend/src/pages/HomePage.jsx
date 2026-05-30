@@ -45,12 +45,17 @@ function HomePage() {
 
   async function handleSelectCategory(category) {
 
+    if (!category?.id) {
+      console.error("Missing category id when selecting category", category);
+      return;
+    }
+
     try {
       setLoading(true);
       const song = await fetchNextSong(category.id)
 
       // setCurrentVideoId(response.data.youtube_video_id);
-      setCurrentCategory(category.name);
+      setCurrentCategory(category);
       setCurrentSong(song);
       setIsPlaying(true);
 

@@ -29,7 +29,7 @@ def get_stream_song(
     time_bucket = get_time_bucket(hour)
     print(f"Time bucket: {time_bucket}, Hour: {hour}")
     recently_played = get_recently_played(db, session_id, category_id)
-    selected_song = select_weighted_song(songs, time_bucket, recently_played)
+    selected_song = select_weighted_song(songs, time_bucket, recently_played, db)
     log_playback(db, session_id, category_id, selected_song.youtube_video_id)
     thumbnail = get_thumbnail_url(selected_song.youtube_video_id)
     return {

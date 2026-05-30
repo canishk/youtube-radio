@@ -10,6 +10,7 @@ from app.models.category import Category
 from app.models.song import Song
 from app.models.playback_history import PlaybackHistory
 from app.models.session import Session
+from app.models.video_health import VideoHealth
 
 from app.db.session import SessionLocal
 from app.services.seed_service import seed_categories
@@ -17,6 +18,7 @@ from app.services.song_seed_service import seed_songs
 
 from app.api.category_routes import router as category_router
 from app.api.song_routes import router as song_router
+from app.api.video_routes import router as video_router
 
 
 
@@ -59,3 +61,4 @@ async def health_check():
 
 app.include_router(category_router)
 app.include_router(song_router)
+app.include_router(video_router)
