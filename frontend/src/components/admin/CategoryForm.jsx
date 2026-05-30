@@ -65,7 +65,10 @@ function CategoryForm({
             p-2
             mt-1
             rounded
-            text-black
+            bg-white
+            text-slate-900
+            border
+            border-slate-300
           "
         />
 
@@ -87,7 +90,10 @@ function CategoryForm({
             p-2
             mt-1
             rounded
-            text-black
+            bg-white
+            text-slate-900
+            border
+            border-slate-300
           "
         />
 
@@ -111,7 +117,10 @@ function CategoryForm({
             p-2
             mt-1
             rounded
-            text-black
+            bg-white
+            text-slate-900
+            border
+            border-slate-300
           "
         />
 

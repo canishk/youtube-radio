@@ -83,7 +83,10 @@ function AdminLoginPage() {
             w-full
             p-2
             rounded
-            text-black
+            bg-white
+            text-slate-900
+            border
+            border-slate-300
           "
         />
 
