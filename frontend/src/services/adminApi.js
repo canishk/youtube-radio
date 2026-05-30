@@ -48,3 +48,14 @@ export async function deleteCategory(
 
   return response.data;
 }
+
+export async function getSongs() {
+
+  const response =
+    await api.get(
+      "/admin/songs"
+    );
+
+  return response.data;
+}
+
