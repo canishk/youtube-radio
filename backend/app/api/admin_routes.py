@@ -2,10 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.models.song import Song
 from app.models.category import Category
 from app.schemas.category_schema import CategoryCreate, CategoryUpdate
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="/admin", tags=["Admin Categories"])
 
 @router.get("/categories")
 def get_categories(
@@ -91,6 +92,14 @@ def delete_category(
     category_id: str,
     db: Session = Depends(get_db)
 ):
+    
+    song_count = db.query(Song).filter(Song.category_id == category_id).count()
+    if song_count > 0:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Category contains songs"
+        )
 
     category = (
         db.query(Category)
