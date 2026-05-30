@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import api from "../../services/api";
+import FormControl from "../../components/ui/FormControl";
 
 function AdminLoginPage() {
 
@@ -70,24 +71,11 @@ function AdminLoginPage() {
           Admin Login
         </h1>
 
-        <input
+        <FormControl
           type="password"
           value={accessKey}
-          onChange={(e) =>
-            setAccessKey(
-              e.target.value
-            )
-          }
+          onChange={(e) => setAccessKey(e.target.value)}
           placeholder="Access Key"
-          className="
-            w-full
-            p-2
-            rounded
-            bg-white
-            text-slate-900
-            border
-            border-slate-300
-          "
         />
 
         {error && (

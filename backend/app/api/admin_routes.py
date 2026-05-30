@@ -152,7 +152,7 @@ def get_songs(
                 song.get_moods(),
             "time_slots":
                 song.get_time_slots(),
-            "energy": song.energy,
+            "energy": int(song.energy),
             "priority": song.priority
         })
 

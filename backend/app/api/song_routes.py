@@ -40,7 +40,7 @@ def get_stream_song(
         "movie": selected_song.movie,
         "thumbnail": thumbnail,
         "moods": selected_song.get_moods(),
-        "energy": selected_song.energy,
+        "energy": int(selected_song.energy),
         "time_slots": selected_song.get_time_slots(),
         "priority": selected_song.priority,
     }

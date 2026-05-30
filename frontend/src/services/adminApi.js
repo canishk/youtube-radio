@@ -59,3 +59,19 @@ export async function getSongs() {
   return response.data;
 }
 
+export async function createSong(payload) {
+    const response = await api.post('/admin/songs',payload);
+    return response.data;
+}
+
+export async function updateSong(songId, payload) {
+    const response = await api.put(`/admin/songs/${songId}`, payload);
+    return response.data;
+    
+}
+
+export function deleteSong(songId) {
+    const response = api.delete(`/admin/songs/${songId}`);
+    return response.data;
+}
+

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import FormControl from "../ui/FormControl";
 
 function CategoryForm({
   initialData,
@@ -54,22 +55,10 @@ function CategoryForm({
           Category ID
         </label>
 
-        <input
+        <FormControl
           value={id}
-          onChange={(e) =>
-            setId(e.target.value)
-          }
+          onChange={(e) => setId(e.target.value)}
           disabled={!!initialData}
-          className="
-            w-full
-            p-2
-            mt-1
-            rounded
-            bg-white
-            text-slate-900
-            border
-            border-slate-300
-          "
         />
 
       </div>
@@ -80,21 +69,9 @@ function CategoryForm({
           Name
         </label>
 
-        <input
+        <FormControl
           value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-          className="
-            w-full
-            p-2
-            mt-1
-            rounded
-            bg-white
-            text-slate-900
-            border
-            border-slate-300
-          "
+          onChange={(e) => setName(e.target.value)}
         />
 
       </div>
@@ -105,23 +82,10 @@ function CategoryForm({
           Description
         </label>
 
-        <textarea
+        <FormControl
+          as="textarea"
           value={description}
-          onChange={(e) =>
-            setDescription(
-              e.target.value
-            )
-          }
-          className="
-            w-full
-            p-2
-            mt-1
-            rounded
-            bg-white
-            text-slate-900
-            border
-            border-slate-300
-          "
+          onChange={(e) => setDescription(e.target.value)}
         />
 
       </div>
