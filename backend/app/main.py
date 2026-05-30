@@ -19,6 +19,7 @@ from app.services.song_seed_service import seed_songs
 from app.api.category_routes import router as category_router
 from app.api.song_routes import router as song_router
 from app.api.video_routes import router as video_router
+from app.api.session_routes import router as session_router
 
 
 
@@ -62,3 +63,4 @@ async def health_check():
 app.include_router(category_router)
 app.include_router(song_router)
 app.include_router(video_router)
+app.include_router(session_router)

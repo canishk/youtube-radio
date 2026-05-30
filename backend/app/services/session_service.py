@@ -19,3 +19,6 @@ def update_last_category(db, session_id: str, category_id: str):
         session.last_category = category_id
         session.last_seen_at = datetime.utcnow()
         db.commit()
+
+def get_session_info(db, session_id: str):
+    return db.query(Session).filter(Session.session_id == session_id).first()
