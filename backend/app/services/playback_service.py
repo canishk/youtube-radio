@@ -1,4 +1,5 @@
 import random
+import json
 from sqlalchemy.orm import Session
 from app.models.song import Song
 from app.models.video_health import VideoHealth
@@ -27,8 +28,8 @@ def select_weighted_song(
         if not check_playability(song.youtube_video_id, db):
             continue
         weight = 1
-        time_slots = song.time_slots or "".split(",")
-        moods = song.moods or "".split(",")
+        time_slots = json.loads(song.time_slots) if song.time_slots else []
+        moods = json.loads(song.moods) if song.moods else []
         if time_bucket in time_slots:
             weight += 5
         energy = int(song.energy or 5)
@@ -36,13 +37,15 @@ def select_weighted_song(
         if time_bucket in ["night", "late_night", "deep_night"]:
             if energy <= 3:
                 weight += 4
+            if "melody" in moods or "night" in moods:
+                weight += 2
         
         if time_bucket in ["morning", "workday"]:
             if energy >= 6:
                 weight += 4
+            if "energetic" in moods:
+                weight += 2
         
-        if "melody" in moods:
-            weight += 2
         
         priority = song.priority or 5
 
