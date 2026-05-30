@@ -70,8 +70,18 @@ export async function updateSong(songId, payload) {
     
 }
 
-export function deleteSong(songId) {
-    const response = api.delete(`/admin/songs/${songId}`);
+export async function deleteSong(songId) {
+    const response = await api.delete(`/admin/songs/${songId}`);
     return response.data;
+}
+
+export async function getVideoHealth() {
+  const response = await api.get("/admin/video-health");
+  return response.data;
+}
+
+export async function enableVideo(videoId) {
+  const response = await api.post(`/admin/video-health/${videoId}/enable`);
+  return response.data;
 }
 

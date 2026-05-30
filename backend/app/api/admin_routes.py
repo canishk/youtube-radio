@@ -5,6 +5,7 @@ import json
 from app.db.session import get_db
 from app.models.song import Song
 from app.models.category import Category
+from app.models.video_health import VideoHealth
 from app.schemas.category_schema import CategoryCreate, CategoryUpdate
 from app.schemas.song_schema import SongCreate, SongUpdate
 
@@ -262,4 +263,57 @@ def delete_song(
 
     return {
         "status": "deleted"
+    }
+
+@router.get("/video-health")
+def get_video_health(
+    db: Session = Depends(get_db)
+):
+
+    records = db.query(VideoHealth).order_by(VideoHealth.failure_count.desc()).all()
+
+    return [
+        {
+            "youtube_video_id":
+                item.youtube_video_id,
+
+            "is_playable":
+                item.is_playable,
+
+            "failure_count":
+                item.failure_count,
+
+            "last_failure_reason":
+                item.last_failure_reason,
+
+            "last_checked":
+                item.last_checked
+        }
+        for item in records
+    ]
+
+@router.post(
+    "/video-health/{video_id}/enable"
+)
+def enable_video(
+    video_id: str,
+    db: Session = Depends(get_db)
+):
+
+    video = db.query(VideoHealth).filter(VideoHealth.youtube_video_id == video_id).first()
+
+    if not video:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Video not found"
+        )
+
+    video.is_playable = True
+    video.failure_count = 0
+    video.last_failure_reason = None
+    db.commit()
+
+    return {
+        "status": "enabled"
     }

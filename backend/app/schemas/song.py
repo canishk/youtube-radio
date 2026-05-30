@@ -8,7 +8,7 @@ class SongBase(BaseModel):
     movie: Optional[str] = None
     thumbnail: Optional[str] = None
     moods: Optional[List[str]] = None
-    energy: Optional[str] = None
+    energy: Optional[int] = 5
     time_slots: Optional[List[str]] = None
     priority: Optional[int] = 5
 
