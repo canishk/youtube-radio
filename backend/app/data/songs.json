@@ -4,9 +4,9 @@
     "youtube_video_id": "I8UrKhurkuk",
     "title": "Innum Konjam Naeram",
     "movie": "Maryan",
-    "moods": "night,melody,romantic",
+    "moods": ["night", "melody", "romantic"],
     "energy": 2,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 10
   },
   {
@@ -14,9 +14,9 @@
     "youtube_video_id": "UPQZ4vuvW2s",
     "title": "Munbe Vaa",
     "movie": "Sillunu Oru Kadhal",
-    "moods": "romantic,night,melody",
+    "moods": ["romantic", "night", "melody"],
     "energy": 2,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 9
   },
   {
@@ -24,9 +24,9 @@
     "youtube_video_id": "rp3_FhRnIRw",
     "title": "Nenjukulle",
     "movie": "Vadacurry",
-    "moods": "romantic,night",
+    "moods": ["romantic", "night"],
     "energy": 3,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
   {
@@ -34,9 +34,9 @@
     "youtube_video_id": "A0BPkm95-dc",
     "title": "Kangal Irandal",
     "movie": "Subramaniapuram",
-    "moods": "melody,night,romantic",
+    "moods": ["melody", "night", "romantic"],
     "energy": 2,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 8
   },
   {
@@ -44,9 +44,9 @@
     "youtube_video_id": "OBTIB09nFys",
     "title": "Puthu Vellai Mazhai",
     "movie": "Roja",
-    "moods": "romantic,night,melody",
+    "moods": ["romantic", "night", "melody"],
     "energy": 2,
-    "time_slots": "night,deep_night",
+    "time_slots": ["night", "deep_night"],
     "priority": 9
   },
   {
@@ -54,9 +54,9 @@
     "youtube_video_id": "Lk30wbj4XKQ",
     "title": "Sundari Kannal Oru Sethi",
     "movie": "Thalapathi",
-    "moods": "melody,night",
+    "moods": ["melody", "night"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
   {
@@ -64,9 +64,9 @@
     "youtube_video_id": "hULrV3TkCAI",
     "title": "Un Paarvaiyil",
     "movie": "Unnaale Unnaale",
-    "moods": "romantic,night,drive",
+    "moods": ["romantic", "night", "drive"],
     "energy": 3,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 7
   },
   {
@@ -74,9 +74,9 @@
     "youtube_video_id": "xPQGqRQc6Kc",
     "title": "Inaye",
     "movie": "Nenjinile",
-    "moods": "melody,romantic,night",
+    "moods": ["melody", "romantic", "night"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
   {
@@ -84,9 +84,9 @@
     "youtube_video_id": "MeVZ3WLyYjI",
     "title": "Devaloka Sundari",
     "movie": "N/A",
-    "moods": "night,drive,melody",
+    "moods": ["night", "drive", "melody"],
     "energy": 3,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 7
   },
   {
@@ -94,20 +94,19 @@
     "youtube_video_id": "dcjrtmRBpQc",
     "title": "Asaiya Kathula",
     "movie": "Neengal Kettavai",
-    "moods": "night,melody",
+    "moods": ["night", "melody"],
     "energy": 2,
-    "time_slots": "night,deep_night",
+    "time_slots": ["night", "deep_night"],
     "priority": 7
   },
-
   {
     "category_id": "malayalam-melodies",
     "youtube_video_id": "ZRdHUj7gVSc",
     "title": "Pramadhavanam",
     "movie": "His Highness Abdullah",
-    "moods": "melody,romantic,classic",
+    "moods": ["melody", "romantic", "classic"],
     "energy": 1,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 10
   },
   {
@@ -115,9 +114,9 @@
     "youtube_video_id": "G3UefvEW6JU",
     "title": "Anthiveyil Ponnuthirum",
     "movie": "Ulladakkam",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 9
   },
   {
@@ -125,9 +124,9 @@
     "youtube_video_id": "peLnJSLgVDY",
     "title": "Sreeraagamo",
     "movie": "Pavithram",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 9
   },
   {
@@ -135,9 +134,9 @@
     "youtube_video_id": "EZI1nw1d55g",
     "title": "Harimuraleeravam",
     "movie": "Aaraam Thampuran",
-    "moods": "melody,classic",
+    "moods": ["melody", "classic"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 9
   },
   {
@@ -145,9 +144,9 @@
     "youtube_video_id": "CoBXbRyhJCw",
     "title": "Kandu Njan",
     "movie": "Abhimanyu",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
   {
@@ -155,9 +154,9 @@
     "youtube_video_id": "cWYAZpBagc8",
     "title": "Nilavinte Neelabhasma",
     "movie": "Agnidevan",
-    "moods": "melody,romantic,night",
+    "moods": ["melody", "romantic", "night"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
   {
@@ -165,9 +164,9 @@
     "youtube_video_id": "8AR7J1f4sL0",
     "title": "Doore Kizhakkudhikkum",
     "movie": "Chithram",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 3,
-    "time_slots": "evening",
+    "time_slots": ["evening"],
     "priority": 8
   },
   {
@@ -175,9 +174,9 @@
     "youtube_video_id": "hInwiP8I-wM",
     "title": "Ramayanakatte",
     "movie": "Abhimanyu",
-    "moods": "melody,classic",
+    "moods": ["melody", "classic"],
     "energy": 3,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 8
   },
   {
@@ -185,9 +184,9 @@
     "youtube_video_id": "KB4XtZr-7X4",
     "title": "Ambadi Payyukal",
     "movie": "Chandranudikkunnathu",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 7
   },
   {
@@ -195,20 +194,19 @@
     "youtube_video_id": "8VtUB-yPDCs",
     "title": "Aaro Nenjil",
     "movie": "Godha",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
-
   {
     "category_id": "mohanlal-90s",
     "youtube_video_id": "ZRdHUj7gVSc",
     "title": "Pramadhavanam",
     "movie": "His Highness Abdullah",
-    "moods": "melody,classic,romantic",
+    "moods": ["melody", "classic", "romantic"],
     "energy": 1,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 10
   },
   {
@@ -216,9 +214,9 @@
     "youtube_video_id": "EZI1nw1d55g",
     "title": "Harimuraleeravam",
     "movie": "Aaraam Thampuran",
-    "moods": "melody,classic",
+    "moods": ["melody", "classic"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 9
   },
   {
@@ -226,9 +224,9 @@
     "youtube_video_id": "OMLSH3USi70",
     "title": "Ramayanakatte",
     "movie": "Abhimanyu",
-    "moods": "upbeat,melody",
+    "moods": ["upbeat", "melody"],
     "energy": 4,
-    "time_slots": "evening",
+    "time_slots": ["evening"],
     "priority": 8
   },
   {
@@ -236,9 +234,9 @@
     "youtube_video_id": "G3UefvEW6JU",
     "title": "Anthiveyil",
     "movie": "Ulladakkam",
-    "moods": "romantic,melody",
+    "moods": ["romantic", "melody"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 9
   },
   {
@@ -246,9 +244,9 @@
     "youtube_video_id": "peLnJSLgVDY",
     "title": "Sreeraagamo",
     "movie": "Pavithram",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 9
   },
   {
@@ -256,9 +254,9 @@
     "youtube_video_id": "CoBXbRyhJCw",
     "title": "Kandu Njan",
     "movie": "Abhimanyu",
-    "moods": "romantic,melody",
+    "moods": ["romantic", "melody"],
     "energy": 3,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
   {
@@ -266,9 +264,9 @@
     "youtube_video_id": "cWYAZpBagc8",
     "title": "Nilavinte Neelabhasma",
     "movie": "Agnidevan",
-    "moods": "romantic,melody",
+    "moods": ["romantic", "melody"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
   {
@@ -276,9 +274,9 @@
     "youtube_video_id": "8AR7J1f4sL0",
     "title": "Doore Kizhakkudhikkum",
     "movie": "Chithram",
-    "moods": "romantic,melody",
+    "moods": ["romantic", "melody"],
     "energy": 3,
-    "time_slots": "evening",
+    "time_slots": ["evening"],
     "priority": 8
   },
   {
@@ -286,9 +284,9 @@
     "youtube_video_id": "aIA2Q6Qnzjc",
     "title": "Mandaaracheppundo",
     "movie": "Dasharatham",
-    "moods": "melody,classic",
+    "moods": ["melody", "classic"],
     "energy": 2,
-    "time_slots": "evening",
+    "time_slots": ["evening"],
     "priority": 7
   },
   {
@@ -296,20 +294,19 @@
     "youtube_video_id": "fb-a0PU2ZF4",
     "title": "Evergreen Mohanlal Hits",
     "movie": "Various",
-    "moods": "melody,romantic,classic",
+    "moods": ["melody", "romantic", "classic"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
-
   {
     "category_id": "party-rock-english",
     "youtube_video_id": "KQ6zr6kCPj8",
     "title": "Party Rock Anthem",
     "movie": "N/A",
-    "moods": "party,energetic,dance",
+    "moods": ["party", "energetic", "dance"],
     "energy": 5,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 10
   },
   {
@@ -317,9 +314,9 @@
     "youtube_video_id": "OPf0YbXqDm0",
     "title": "Uptown Funk",
     "movie": "N/A",
-    "moods": "party,funk,dance",
+    "moods": ["party", "funk", "dance"],
     "energy": 5,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 9
   },
   {
@@ -327,9 +324,9 @@
     "youtube_video_id": "ru0K8uYEZWw",
     "title": "Can't Stop The Feeling",
     "movie": "Trolls",
-    "moods": "happy,party,upbeat",
+    "moods": ["happy", "party", "upbeat"],
     "energy": 4,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 9
   },
   {
@@ -337,9 +334,9 @@
     "youtube_video_id": "ZbZSe6N_BXs",
     "title": "Happy",
     "movie": "Despicable Me 2",
-    "moods": "happy,party",
+    "moods": ["happy", "party"],
     "energy": 4,
-    "time_slots": "afternoon,evening",
+    "time_slots": ["afternoon", "evening"],
     "priority": 9
   },
   {
@@ -347,9 +344,9 @@
     "youtube_video_id": "nfWlot6h_JM",
     "title": "Shake It Off",
     "movie": "N/A",
-    "moods": "pop,party,energetic",
+    "moods": ["pop", "party", "energetic"],
     "energy": 4,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 8
   },
   {
@@ -357,9 +354,9 @@
     "youtube_video_id": "-tJYN-eG1zk",
     "title": "We Will Rock You",
     "movie": "N/A",
-    "moods": "rock,anthem,party",
+    "moods": ["rock", "anthem", "party"],
     "energy": 5,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 9
   },
   {
@@ -367,9 +364,9 @@
     "youtube_video_id": "eP2dZ9VJ6w0",
     "title": "Sexy and I Know It",
     "movie": "N/A",
-    "moods": "party,dance",
+    "moods": ["party", "dance"],
     "energy": 5,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 8
   },
   {
@@ -377,9 +374,9 @@
     "youtube_video_id": "hHUbLv4ThOo",
     "title": "Moves Like Jagger",
     "movie": "N/A",
-    "moods": "pop,party,dance",
+    "moods": ["pop", "party", "dance"],
     "energy": 4,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 8
   },
   {
@@ -387,9 +384,9 @@
     "youtube_video_id": "L_du4fG7c2M",
     "title": "Yeah!",
     "movie": "N/A",
-    "moods": "party,hip-hop,dance",
+    "moods": ["party", "hip-hop", "dance"],
     "energy": 5,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 8
   },
   {
@@ -397,20 +394,19 @@
     "youtube_video_id": "Q9yh7Vw435Q",
     "title": "Livin' on a Prayer",
     "movie": "N/A",
-    "moods": "rock,party,anthem",
+    "moods": ["rock", "party", "anthem"],
     "energy": 5,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 9
   },
-
   {
     "category_id": "latest-malayalam-2026",
     "youtube_video_id": "kzpS-A3QJqE",
     "title": "Kaattuchembakam",
     "movie": "Pallichattambi",
-    "moods": "romantic,melody,latest",
+    "moods": ["romantic", "melody", "latest"],
     "energy": 3,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 10
   },
   {
@@ -418,9 +414,9 @@
     "youtube_video_id": "rPpoZ1iH3aA",
     "title": "Ini Varumo",
     "movie": "Drishyam 3",
-    "moods": "melody,emotional",
+    "moods": ["melody", "emotional"],
     "energy": 2,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 9
   },
   {
@@ -428,9 +424,9 @@
     "youtube_video_id": "5BQRTBu8QOY",
     "title": "Paazha",
     "movie": "Vaazha 2",
-    "moods": "upbeat,energetic",
+    "moods": ["upbeat", "energetic"],
     "energy": 4,
-    "time_slots": "evening,party",
+    "time_slots": ["evening", "workday"],
     "priority": 8
   },
   {
@@ -438,9 +434,9 @@
     "youtube_video_id": "RvoPR-XQ8lQ",
     "title": "Thennal Thalodi",
     "movie": "Revolver Rinko",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 8
   },
   {
@@ -448,9 +444,9 @@
     "youtube_video_id": "NAkQVL61BRI",
     "title": "Mayajaalame",
     "movie": "Sarvam Maya",
-    "moods": "romantic,melody",
+    "moods": ["romantic", "melody"],
     "energy": 3,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 9
   },
   {
@@ -458,9 +454,9 @@
     "youtube_video_id": "Qh04w0kbU9w",
     "title": "Mollywood Times",
     "movie": "N/A",
-    "moods": "party,energetic",
+    "moods": ["party", "energetic"],
     "energy": 5,
-    "time_slots": "night,late_night",
+    "time_slots": ["night", "late_night"],
     "priority": 8
   },
   {
@@ -468,9 +464,9 @@
     "youtube_video_id": "2I-VEekIrQU",
     "title": "Mizhiyilaaranu",
     "movie": "N/A",
-    "moods": "melody,romantic",
+    "moods": ["melody", "romantic"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 7
   },
   {
@@ -478,9 +474,9 @@
     "youtube_video_id": "KfDy0lI1sBw",
     "title": "Minnalvala",
     "movie": "N/A",
-    "moods": "romantic,feel-good",
+    "moods": ["romantic", "feel-good"],
     "energy": 3,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 8
   },
   {
@@ -488,9 +484,9 @@
     "youtube_video_id": "GrVBFRl4O28",
     "title": "Pranayaalole Baale",
     "movie": "Madura Kanakku",
-    "moods": "romantic,melody",
+    "moods": ["romantic", "melody"],
     "energy": 2,
-    "time_slots": "night",
+    "time_slots": ["night"],
     "priority": 7
   },
   {
@@ -498,9 +494,9 @@
     "youtube_video_id": "GbVrFutqIro",
     "title": "Best of 2025 Romantic Hits",
     "movie": "Various",
-    "moods": "romantic,melody",
+    "moods": ["romantic", "melody"],
     "energy": 2,
-    "time_slots": "evening,night",
+    "time_slots": ["evening", "night"],
     "priority": 8
   }
 ]

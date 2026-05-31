@@ -14,7 +14,7 @@ function HomePage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [resumeCategory, setResumeCategory] = useState(null)
-  const [showResumeCard, setShowResumeCard] = useState(null)
+  const [showResumeCard, setShowResumeCard] = useState(false)
   const {
     currentSong,
     setCurrentSong,
@@ -34,6 +34,12 @@ function HomePage() {
     // fetchCategories();
      initializePage();
   }, []);
+
+  useEffect(() => {
+    if (isPlaying) {
+      setShowResumeCard(false);
+    }
+  }, [isPlaying]);
 
   async function initializePage() {
   const cats = await fetchCategories();
@@ -82,9 +88,9 @@ function HomePage() {
       );
 
     if (!category) {
-      setShowResumeCard(false);
       return;
     }
+    setShowResumeCard(false);
 
     await handleSelectCategory(category);
   }
@@ -104,6 +110,7 @@ function HomePage() {
       setCurrentCategory(category);
       setCurrentSong(song);
       setIsPlaying(true);
+      setShowResumeCard(false);
 
       const preloadSongs = [];
       for (let i = 0; i < 3; i++) {

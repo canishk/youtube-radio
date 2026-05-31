@@ -1,4 +1,6 @@
 from sqlalchemy import Column, Integer, String
+import json
+
 from app.db.database import Base
 
 class Song(Base):
@@ -14,3 +16,9 @@ class Song(Base):
 
     time_slots = Column(String)
     priority = Column(Integer, default=5)
+
+    def get_moods(self):
+        return json.loads(self.moods) if self.moods else []
+    
+    def get_time_slots(self):
+        return json.loads(self.time_slots) if self.time_slots else []

@@ -39,8 +39,8 @@ def get_stream_song(
         "title": selected_song.title,
         "movie": selected_song.movie,
         "thumbnail": thumbnail,
-        "moods": selected_song.moods,
-        "energy": selected_song.energy,
-        "time_slots": selected_song.time_slots,
+        "moods": selected_song.get_moods(),
+        "energy": int(selected_song.energy),
+        "time_slots": selected_song.get_time_slots(),
         "priority": selected_song.priority,
     }

@@ -15,9 +15,9 @@ def record_failure(db,youtube_video_id, reason):
         )
         db.add(video)
 
-    video.failure_count += 1
+    video.failure_count = (video.failure_count or 0) + 1
     video.last_failure_reason = reason
-    video.last_failure_time = datetime.utcnow()
+    video.last_checked = datetime.utcnow()
     if video.failure_count >= 3:
         video.is_playable = False
     db.commit()

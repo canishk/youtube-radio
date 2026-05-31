@@ -20,6 +20,8 @@ from app.api.category_routes import router as category_router
 from app.api.song_routes import router as song_router
 from app.api.video_routes import router as video_router
 from app.api.session_routes import router as session_router
+from app.api.admin_routes import router as admin_router
+from app.api.admin_auth_routes import router as admin_auth_router
 
 
 
@@ -64,3 +66,6 @@ app.include_router(category_router)
 app.include_router(song_router)
 app.include_router(video_router)
 app.include_router(session_router)
+
+app.include_router(admin_router)
+app.include_router(admin_auth_router)

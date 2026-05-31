@@ -4,6 +4,7 @@ import YouTube from "react-youtube";
 
 import { usePlayer } from "../context/PlayerContext";
 import { fetchNextSong } from "../services/radioEngine";
+import api from "../services/api";
 
 function RadioPlayer() {
 
@@ -129,23 +130,25 @@ async function handlePlayerError(
         event.data
       );
 
-      try {
+      if (currentSong) {
+        try {
 
-        await api.post(
-          "/video/failure",
-          {
-            youtube_video_id:
-              currentSong
-                .youtube_video_id,
+          await api.post(
+            "/video/failure",
+            {
+              youtube_video_id:
+                currentSong
+                  .youtube_video_id,
 
-            reason:
-              `youtube_error_${event.data}`
-          }
-        );
+              reason:
+                `youtube_error_${event.data}`
+            }
+          );
 
-      } catch (error) {
+        } catch (error) {
 
-        console.error(error);
+          console.error(error);
+        }
       }
 
       await handleSongEnd();
@@ -288,13 +291,16 @@ async function handlePlayerError(
         </div>
       </div>
 
-      <YouTube
-        videoId={currentSong.youtube_video_id}
-        opts={opts}
-        onReady={onReady}
-        onEnd={handleSongEnd}
-        onError={handlePlayerError}
-      />
+      {currentSong && (
+        <YouTube
+          key={currentSong.youtube_video_id}
+          videoId={currentSong.youtube_video_id}
+          opts={opts}
+          onReady={onReady}
+          onEnd={handleSongEnd}
+          onError={handlePlayerError}
+        />
+      )}
 
     </div>
   );

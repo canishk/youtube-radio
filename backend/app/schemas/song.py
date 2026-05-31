@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 class SongBase(BaseModel):
     category_id: str
@@ -7,9 +7,9 @@ class SongBase(BaseModel):
     title: Optional[str] = None
     movie: Optional[str] = None
     thumbnail: Optional[str] = None
-    moods: Optional[str] = None
-    energy: Optional[str] = None
-    time_slots: Optional[str] = None
+    moods: Optional[List[str]] = None
+    energy: Optional[int] = 5
+    time_slots: Optional[List[str]] = None
     priority: Optional[int] = 5
 
 class SongResponse(SongBase):
