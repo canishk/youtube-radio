@@ -1,9 +1,21 @@
 export function getSessionId() {
-    let sessionId = localStorage.getItem('u_tube_radio_session');
-
-    if (!sessionId) {
-        sessionId = crypto.randomUUID();
-        localStorage.setItem('u_tube_radio_session', sessionId)
-    }
+    let sessionId = generateSessionId()
     return sessionId
+}
+
+function generateSessionId() {
+
+    if (
+        window.crypto &&
+        window.crypto.randomUUID
+    ) {
+        return window.crypto.randomUUID();
+    }
+
+    return (
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .substring(2)
+    );
 }
