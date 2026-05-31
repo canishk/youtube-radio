@@ -1,0 +1,14 @@
+[Unit]
+Description=U-Tube Radio FastAPI Uvicorn Service
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/u-tube-radio/backend
+EnvironmentFile=/opt/u-tube-radio/backend/.env
+ExecStart=/opt/u-tube-radio/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
