@@ -6,6 +6,7 @@ import {
 } from "../../utils/youtube";
 
 import FormControl from "../ui/FormControl";
+import { fetchYoutubeMetadata } from "../../services/adminApi";
 
 const MOOD_SUGGESTIONS = [
   "melody",
@@ -42,33 +43,26 @@ function SongForm({
   onCancel
 }) {
 
-  const [youtubeUrl, setYoutubeUrl] =
-    useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
 
-  const [videoId, setVideoId] =
-    useState("");
+  const [videoId, setVideoId] = useState("");
 
-  const [title, setTitle] =
-    useState("");
+  const [title, setTitle] = useState("");
 
-  const [movie, setMovie] =
-    useState("");
+  const [movie, setMovie] = useState("");
 
-  const [categoryId, setCategoryId] =
-    useState("");
+  const [categoryId, setCategoryId] = useState("");
 
-  const [moodsInput, setMoodsInput] =
-    useState("");
+  const [moodsInput, setMoodsInput] = useState("");
 
-  const [selectedTimeSlots,
-    setSelectedTimeSlots] =
-    useState([]);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
 
-  const [energy, setEnergy] =
-    useState(5);
+  const [energy, setEnergy] = useState(5);
+  const [priority, setPriority] = useState(5);
 
-  const [priority, setPriority] =
-    useState(5);
+  const [channel, setChannel] = useState("");
+  const [duration, setDuration] = useState("");
+  const [alreadyExists, setAlreadyExists] = useState(false)
 
   useEffect(() => {
 
@@ -126,6 +120,37 @@ function SongForm({
     categories
   ]);
 
+  async function handleFetchMetadata() {
+
+    if (!youtubeUrl) {
+        return;
+    }
+
+    try {
+
+        const metadata = await fetchYoutubeMetadata(youtubeUrl);
+
+        setTitle(
+        metadata.title
+        );
+
+        setChannel(
+        metadata.channel
+        );
+
+        setDuration(
+        metadata.duration_display
+        );
+        setAlreadyExists(
+          metadata.already_exists
+        )
+
+    } catch (error) {
+
+        console.error(error);
+        alert ("Unable to fetch metadata");
+    }
+}
   function handleYoutubeChange(
     value
   ) {
@@ -263,6 +288,21 @@ function SongForm({
           onChange={(e) => handleYoutubeChange(e.target.value)}
           placeholder="https://youtu.be/..."
         />
+        <button
+            type="button"
+            onClick={
+                handleFetchMetadata
+            }
+            className="
+                mt-2
+                bg-blue-600
+                px-3
+                py-2
+                rounded
+            "
+            >
+            Fetch Metadata
+        </button>
 
       </div>
 
@@ -294,11 +334,52 @@ function SongForm({
               rounded-lg
             "
           />
-
+            
         </div>
 
       )}
+    {channel && (
 
+        <div
+            className="
+            mt-3
+            text-sm
+            text-slate-400
+            "
+        >
+
+            <p>
+            Channel:
+            {" "}
+            {channel}
+            </p>
+
+            <p>
+            Duration:
+            {" "}
+            {duration}
+            </p>
+
+        </div>
+
+    )}
+
+    {alreadyExists && (
+
+      <div
+        className="
+          mt-3
+          bg-red-800
+          p-3
+          rounded
+        "
+      >
+
+        ⚠ This video already exists in the catalog.
+
+      </div>
+
+    )}
       <div className="mb-4">
 
         <label>

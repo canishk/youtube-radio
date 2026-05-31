@@ -85,3 +85,11 @@ export async function enableVideo(videoId) {
   return response.data;
 }
 
+export async function fetchYoutubeMetadata(youtubeUrl) {
+  const response = await api.post("/admin/youtube/metadata",
+      {
+        youtube_url: youtubeUrl
+      }
+    );
+  return response.data;
+}

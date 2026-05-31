@@ -8,6 +8,9 @@ from app.models.category import Category
 from app.models.video_health import VideoHealth
 from app.schemas.category_schema import CategoryCreate, CategoryUpdate
 from app.schemas.song_schema import SongCreate, SongUpdate
+from app.services.youtube_service import fetch_video_metadata
+from app.utils.youtube import extract_video_id
+
 
 router = APIRouter(prefix="/admin", tags=["Admin Categories"])
 
@@ -292,9 +295,7 @@ def get_video_health(
         for item in records
     ]
 
-@router.post(
-    "/video-health/{video_id}/enable"
-)
+@router.post("/video-health/{video_id}/enable")
 def enable_video(
     video_id: str,
     db: Session = Depends(get_db)
@@ -317,3 +318,24 @@ def enable_video(
     return {
         "status": "enabled"
     }
+
+
+@router.post("/youtube/metadata")
+def youtube_metadata(
+    payload: dict,
+    db: Session = Depends(get_db)
+):
+    youtube_url = payload.get("youtube_url")
+    video_id = extract_video_id(youtube_url)
+    metadata = fetch_video_metadata(video_id)
+
+    if not metadata:
+        raise HTTPException(
+            status_code=404,
+            detail="Video not found"
+        )
+    
+    existing_song = db.query(Song).filter(Song.youtube_video_id == video_id).first()
+    metadata["already_exists"] = existing_song is not None
+    return metadata
+
