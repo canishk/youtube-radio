@@ -1,6 +1,18 @@
+const SESSION_STORAGE_KEY = "uTubeRadioSessionId";
+
 export function getSessionId() {
-    let sessionId = generateSessionId()
-    return sessionId
+    // if (typeof window === "undefined") {
+    //     return generateSessionId();
+    // }
+
+    let sessionId = window.localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!sessionId) {
+        sessionId = generateSessionId();
+        window.localStorage.setItem(SESSION_STORAGE_KEY, sessionId);
+    }
+    console.log(sessionId)
+
+    return sessionId;
 }
 
 function generateSessionId() {
