@@ -16,6 +16,7 @@ export function PlayerProvider({
   const [volume, setVolume] = useState(50);
   const [queue, setQueue] = useState([]);
   const [playbackStatus, setPlaybackStatus] = useState("stopped");
+  const [resumePosition, setResumePosition] = useState(0);
 
   const value = {
 
@@ -36,6 +37,9 @@ export function PlayerProvider({
 
     playbackStatus,
     setPlaybackStatus,
+
+    resumePosition,
+    setResumePosition,
   };
 
   return (

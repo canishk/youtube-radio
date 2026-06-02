@@ -1,9 +1,11 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import YouTube from "react-youtube";
 
 import { usePlayer } from "../context/PlayerContext";
 import { fetchNextSong } from "../services/radioEngine";
+import { updateCurrentSong, updatePlaybackPosition } from "../services/sessionApi";
+import { getSessionId } from "../services/sessionService";
 import api from "../services/api";
 
 function RadioPlayer() {
@@ -29,19 +31,25 @@ function RadioPlayer() {
   playbackStatus,
   setPlaybackStatus,
 
+  resumePosition,
+  setResumePosition
+
 } = usePlayer();
 
   function onReady(event) {
-
+    console.log(resumePosition);
+    if (resumePosition > 15) {
+      event.target.seekTo(resumePosition, true);
+    }
     playerRef.current = event.target;
     event.target.setVolume(volume);
     setPlaybackStatus("playing");
   }
 
-  function handlePause() {
+  async function handlePause() {
 
     if (!playerRef.current) return;
-
+    // await savePlaybackPosition();
     playerRef.current.pauseVideo();
 
     setIsPlaying(false);
@@ -58,10 +66,11 @@ function RadioPlayer() {
     setPlaybackStatus("playing");
   }
 
-  function handleStop() {
+  async function handleStop() {
 
     if (!playerRef.current) return;
 
+    // await savePlaybackPosition();
     playerRef.current.stopVideo();
 
     setIsPlaying(false);
@@ -81,7 +90,7 @@ function RadioPlayer() {
 }
 
   async function handleSongEnd() {
-
+    await updatePlaybackPosition(getSessionId(), currentSong.id, 0)
     const categoryId = currentCategory?.id ?? currentCategory;
     if (!categoryId) return;
 
@@ -104,9 +113,7 @@ function RadioPlayer() {
     }
 
     if (!nextSong) return;
-
     setCurrentSong(nextSong);
-
     const additionalSong =
         await fetchNextSong(
         categoryId
@@ -153,6 +160,118 @@ async function handlePlayerError(
 
       await handleSongEnd();
     }
+
+    async function trackSongStart(
+      song
+    ) {
+
+      if (!song) {
+        return;
+      }
+
+      try {
+
+        await updateCurrentSong(
+          getSessionId(),
+          song.id,
+          currentCategory?.id
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Failed to track song",
+          error
+        );
+      }
+    }
+
+    async function savePlaybackPosition() {
+
+      if (
+        !playerRef.current ||
+        !currentSong
+      ) {
+        return;
+      }
+
+      try {
+
+        const currentTime =
+          Math.floor(
+            playerRef.current
+              .getCurrentTime()
+          );
+
+        await updatePlaybackPosition(
+          getSessionId(),
+          currentSong.id,
+          currentTime
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Failed to save playback position",
+          error
+        );
+      }
+    }
+
+  useEffect(() => {
+    if (currentSong && currentCategory) {
+      trackSongStart(currentSong);
+    }
+    function handleBeforeUnload() {
+
+      if (
+        !playerRef.current ||
+        !currentSong
+      ) {
+        return;
+      }
+
+      const payload = {
+
+        session_id:
+          getSessionId(),
+
+        song_id:
+          currentSong.id,
+
+        position_seconds:
+          Math.floor(
+            playerRef.current
+              .getCurrentTime()
+          )
+      };
+
+      navigator.sendBeacon(
+        "/api/session/playback-position",
+        new Blob(
+          [JSON.stringify(payload)],
+          {
+            type:
+              "application/json"
+          }
+        )
+      );
+    }
+
+    window.addEventListener(
+      "beforeunload",
+      handleBeforeUnload
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "beforeunload",
+        handleBeforeUnload
+      );
+    };
+
+  }, [currentSong]);
 
   const opts = {
 
