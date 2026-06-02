@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import api from "../services/api";
 
@@ -13,8 +13,10 @@ import { getSessionId } from "../services/sessionService";
 function HomePage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [resumeCategory, setResumeCategory] = useState(null)
-  const [showResumeCard, setShowResumeCard] = useState(false)
+  const [resumeCategory, setResumeCategory] = useState(null);
+  const [resumeSong, setResumeSong] = useState(null);
+  const [showResumeCard, setShowResumeCard] = useState(false);
+  const [resumePosition, setResumePosition] = useState(0);
   const {
     currentSong,
     setCurrentSong,
@@ -27,6 +29,7 @@ function HomePage() {
 
     queue,
     setQueue,
+    setResumePosition: setPlayerResumePosition
 
   } = usePlayer();
 
@@ -36,90 +39,127 @@ function HomePage() {
   }, []);
 
   useEffect(() => {
+
     if (isPlaying) {
       setShowResumeCard(false);
     }
+
   }, [isPlaying]);
 
-  async function initializePage() {
-  const cats = await fetchCategories();
+  const canResumeSong = useMemo(() => {
 
-  await loadResumeInfo(cats);
-}
+    return (
+      resumeSong &&
+      resumePosition >= 15
+    );
+
+  }, [resumeSong, resumePosition]);
+
+  async function initializePage() {
+
+    const cats =
+      await fetchCategories();
+
+    await loadResumeInfo(cats);
+  }
 
   async function fetchCategories() {
 
     try {
 
-      const response = await api.get("/categories/");
-      setCategories(response.data);
+      const response =
+        await api.get(
+          "/categories/"
+        );
+
+      setCategories(
+        response.data
+      );
+
       return response.data;
 
     } catch (error) {
 
       console.error(error);
+
+      return [];
     }
   }
 
-  async function loadResumeInfo(categoriesList = null) {
-  try {
+  async function loadResumeInfo(
+    categoriesList = []
+  ) {
 
-    const sessionId = getSessionId();
-    const session = await getCurrentSession(sessionId);
+    try {
 
-    const list = categoriesList || categories;
-    const category = list.find((c) => c.id === session.last_category);
+      const sessionId =
+        getSessionId();
 
-    if (category) {
-      setResumeCategory(category);
-      setShowResumeCard(true);
-    }
+      const session =
+        await getCurrentSession(
+          sessionId
+        );
 
-  } catch (error) {
-    console.error("Failed to load session", error);
-  }
-}
+      const category =
+        categoriesList.find(
+          (c) =>
+            c.id ===
+            session.last_category
+        );
 
-  async function handleResumeStation() {
+      if (category) {
 
-    const category = categories.find(
-        (c) =>
-          c.id === resumeCategory.id
+        setResumeCategory(
+          category
+        );
+
+        setShowResumeCard(
+          true
+        );
+      }
+
+      if (session.last_song) {
+
+        setResumeSong(
+          session.last_song
+        );
+
+        setResumePosition(
+          session.playback_position_seconds || 0
+        );
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Failed to load session",
+        error
       );
-
-    if (!category) {
-      return;
     }
-    setShowResumeCard(false);
-
-    await handleSelectCategory(category);
   }
 
-  async function handleSelectCategory(category) {
+  async function handleResume() {
 
-    if (!category?.id) {
-      console.error("Missing category id when selecting category", category);
+    if (!resumeSong || !resumeCategory) {
       return;
     }
 
     try {
       setLoading(true);
-      const song = await fetchNextSong(category.id)
 
-      // setCurrentVideoId(response.data.youtube_video_id);
-      setCurrentCategory(category);
-      setCurrentSong(song);
+      setCurrentCategory(resumeCategory);
+      setCurrentSong(resumeSong);
+      
+      if (canResumeSong) {
+        setPlayerResumePosition(resumePosition);
+      }
+
       setIsPlaying(true);
       setShowResumeCard(false);
 
       const preloadSongs = [];
       for (let i = 0; i < 3; i++) {
-
-        const nextSong =
-          await fetchNextSong(
-            category.id
-          );
-
+        const nextSong = await fetchNextSong(resumeCategory.id);
         if (nextSong) {
           preloadSongs.push(nextSong);
         }
@@ -128,25 +168,148 @@ function HomePage() {
       setQueue(preloadSongs);
 
     } catch (error) {
-
       console.error(error);
     } finally {
       setLoading(false);
     }
   }
 
-  return (
-    <div className="p-6">
+  function handleStartFresh() {
 
-      <h1 className="text-3xl font-bold mb-6">
+    setResumeSong(null);
+    setResumePosition(0);
+    setPlayerResumePosition(0);
+    setShowResumeCard(false);
+    handleSelectCategory(resumeCategory);
+  }
+
+  async function handleSelectCategory(
+    category
+  ) {
+
+    if (!category?.id) {
+
+      console.error(
+        "Missing category id",
+        category
+      );
+
+      return;
+    }
+
+    try {
+
+      setLoading(true);
+
+      const song =
+        await fetchNextSong(
+          category.id
+        );
+
+      setCurrentCategory(
+        category
+      );
+
+      setCurrentSong(
+        song
+      );
+
+      setIsPlaying(
+        true
+      );
+
+      setShowResumeCard(
+        false
+      );
+
+      const preloadSongs = [];
+
+      for (
+        let i = 0;
+        i < 3;
+        i++
+      ) {
+
+        const nextSong =
+          await fetchNextSong(
+            category.id
+          );
+
+        if (nextSong) {
+
+          preloadSongs.push(
+            nextSong
+          );
+        }
+      }
+
+      setQueue(
+        preloadSongs
+      );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+    } finally {
+
+      setLoading(
+        false
+      );
+    }
+  }
+
+  return (
+
+    <div className="p-6 pb-52">
+
+      <h1
+        className="
+          text-3xl
+          font-bold
+          mb-6
+        "
+      >
         U-Tube Radio
       </h1>
-      {showResumeCard && resumeCategory && (
+
+      {showResumeCard &&
+        resumeCategory && (
+
         <ResumeCard
-          categoryName={resumeCategory.name}
-          onResume={handleResumeStation}
+
+          categoryName={
+            resumeCategory.name
+          }
+
+          songTitle={
+            resumeSong?.title
+          }
+
+          thumbnail={
+            resumeSong?.thumbnail
+          }
+
+          resumePosition={
+            resumePosition
+          }
+
+          canResumeSong={
+            canResumeSong
+          }
+
+          onResume={
+            handleResume
+          }
+
+          onStartFresh={
+            handleStartFresh
+          }
         />
       )}
+
       <div
         className="
           grid
@@ -156,11 +319,15 @@ function HomePage() {
           gap-6
         "
       >
-        {categories.map((category) => (
+        {categories.map(
+          (category) => (
+
           <CategoryCard
             key={category.id}
             category={category}
-            onSelect={handleSelectCategory}
+            onSelect={
+              handleSelectCategory
+            }
           />
         ))}
       </div>
