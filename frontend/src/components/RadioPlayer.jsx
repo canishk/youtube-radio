@@ -181,12 +181,15 @@ async function handlePlayerError(
       <div
         className="
           flex
-          items-center
-          justify-between
+          flex-col
+          gap-4
+          md:flex-row
+          md:items-center
+          md:justify-between
         "
       >
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2">
 
           {currentSong?.thumbnail && (
             <img
