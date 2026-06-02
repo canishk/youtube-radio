@@ -30,6 +30,8 @@ def get_stream_song(
     print(f"Time bucket: {time_bucket}, Hour: {hour}")
     recently_played = get_recently_played(db, session_id, category_id)
     selected_song = select_weighted_song(songs, time_bucket, recently_played, db)
+    if not selected_song:
+        raise HTTPException(status_code=500, detail="Could not select a song from the category.")
     log_playback(db, session_id, category_id, selected_song.youtube_video_id)
     thumbnail = get_thumbnail_url(selected_song.youtube_video_id)
     return {

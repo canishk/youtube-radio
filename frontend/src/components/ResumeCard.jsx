@@ -1,10 +1,16 @@
+import { formatDuration } from "../utils/timeFormatter";
+
 function ResumeCard({
   categoryName,
-  onResume
+  songTitle,
+  thumbnail,
+  resumePosition,
+  canResumeSong,
+  onResume,
+  onStartFresh
 }) {
-
+  console.log(songTitle);
   return (
-
     <div
       className="
         bg-slate-900
@@ -15,7 +21,6 @@ function ResumeCard({
         mb-6
       "
     >
-
       <h2
         className="
           text-lg
@@ -31,32 +36,101 @@ function ResumeCard({
           mt-2
         "
       >
-        Resume listening:
+        Continue listening?
       </p>
 
-      <p
-        className="
-          mt-2
-          font-medium
-        "
-      >
-        {categoryName}
-      </p>
-
-      <button
-        onClick={onResume}
+      <div
         className="
           mt-4
-          bg-red-600
-          hover:bg-red-700
-          px-4
-          py-2
-          rounded-lg
+          flex
+          items-center
+          gap-4
         "
       >
-        Resume Station
-      </button>
+        {thumbnail && (
+          <img
+            src={thumbnail}
+            alt={songTitle}
+            className="
+              w-16
+              h-16
+              rounded-lg
+              object-cover
+            "
+          />
+        )}
 
+        <div>
+          {songTitle && (
+            <p
+              className="
+                font-semibold
+                text-white
+              "
+            >
+              {songTitle}
+            </p>
+          )}
+
+          <p
+            className="
+              text-slate-300
+              text-sm
+            "
+          >
+            {categoryName}
+          </p>
+
+          {canResumeSong && (
+            <p
+              className="
+                text-green-400
+                text-sm
+                mt-1
+              "
+            >
+              Resume at{" "}
+              {formatDuration(
+                resumePosition
+              )}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div
+        className="
+          flex
+          gap-3
+          mt-5
+        "
+      >
+        <button
+          onClick={onResume}
+          className="
+            bg-red-600
+            hover:bg-red-700
+            px-4
+            py-2
+            rounded-lg
+          "
+        >
+          Resume
+        </button>
+
+        <button
+          onClick={onStartFresh}
+          className="
+            bg-slate-700
+            hover:bg-slate-600
+            px-4
+            py-2
+            rounded-lg
+          "
+        >
+          Start Fresh
+        </button>
+      </div>
     </div>
   );
 }
