@@ -9,7 +9,6 @@ function ResumeCard({
   onResume,
   onStartFresh
 }) {
-  console.log(songTitle);
   return (
     <div
       className="

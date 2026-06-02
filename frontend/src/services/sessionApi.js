@@ -8,7 +8,6 @@ export async function getCurrentSession(
     await api.get(
       `/session/current?session_id=${sessionId}`
     );
-    console.log(response.data);
   return response.data;
 }
 

@@ -4,11 +4,13 @@ from typing import List
 
 from app.db.session import get_db
 from app.models.category import Category
+from app.models.song import Song
 from app.schemas.category import CategoryResponse
 
 router = APIRouter(prefix="/categories", tags=["categories"])
 
 @router.get("/", response_model=List[CategoryResponse])
 def get_categories(db: Session = Depends(get_db)):
-    categories = db.query(Category).all()
+    categories = db.query(Category).join(Song, Song.category_id == Category.id).distinct().all()
     return categories
+

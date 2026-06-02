@@ -4,6 +4,9 @@ import {
   Route
 } from "react-router-dom";
 
+import { useEffect } from "react";
+import { getPublicConfig } from "./services/configApi";
+
 import HomePage from "./pages/HomePage";
 
 import AdminLoginPage
@@ -28,6 +31,67 @@ import AdminProtectedRoute
 from "./components/AdminProtectedRoute";
 
 function App() {
+
+  useEffect(() => {
+
+    function setMetaTag(name, value) {
+      if (!value) {
+        return;
+      }
+      let element = document.head.querySelector(
+        `meta[name="${name}"]`
+      );
+      if (!element) {
+        element = document.createElement("meta");
+        element.setAttribute("name", name);
+        document.head.appendChild(element);
+      }
+      element.setAttribute("content", value);
+    }
+
+    function setMetaProperty(property, value) {
+      if (!value) {
+        return;
+      }
+      let element = document.head.querySelector(
+        `meta[property="${property}"]`
+      );
+      if (!element) {
+        element = document.createElement("meta");
+        element.setAttribute("property", property);
+        document.head.appendChild(element);
+      }
+      element.setAttribute("content", value);
+    }
+
+    async function loadConfig() {
+
+      try {
+
+        const config =
+          await getPublicConfig();
+
+        if (config.site_title) {
+          document.title = config.site_title;
+        }
+
+        setMetaTag("description", config.meta_description);
+        setMetaTag("keywords", config.meta_keywords);
+        setMetaTag("author", config.meta_author);
+        setMetaProperty(
+          "og:title",
+          config.og_title || config.site_title
+        );
+
+      } catch (error) {
+
+        console.error(error);
+      }
+    }
+
+    loadConfig();
+
+  }, []);
 
   return (
 
