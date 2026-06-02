@@ -9,6 +9,7 @@ import { usePlayer } from "../context/PlayerContext";
 import { fetchNextSong } from "../services/radioEngine";
 import { getCurrentSession } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
+import { shuffleArray } from "../utils/shuffleArray";
 
 function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -72,9 +73,52 @@ function HomePage() {
           "/categories/"
         );
 
-      setCategories(
+      const storedOrder =
+  sessionStorage.getItem(
+    "category_order"
+  );
+
+if (storedOrder) {
+
+    const order =
+      JSON.parse(
+        storedOrder
+      );
+
+    const ordered =
+      order
+        .map(
+          id =>
+            response.data.find(
+              c => c.id === id
+            )
+        )
+        .filter(Boolean);
+
+    setCategories(
+      ordered
+    );
+
+  } else {
+
+    const shuffled =
+      shuffleArray(
         response.data
       );
+
+    sessionStorage.setItem(
+      "category_order",
+      JSON.stringify(
+        shuffled.map(
+          c => c.id
+        )
+      )
+    );
+
+    setCategories(
+      shuffled
+    );
+  }
 
       return response.data;
 
@@ -180,6 +224,8 @@ function HomePage() {
     setResumePosition(0);
     setPlayerResumePosition(0);
     setShowResumeCard(false);
+    setCurrentSong(null);
+    setCurrentCategory(null);
     handleSelectCategory(resumeCategory);
   }
 
@@ -200,6 +246,7 @@ function HomePage() {
     try {
 
       setLoading(true);
+      setCurrentSong(null);
 
       const song =
         await fetchNextSong(

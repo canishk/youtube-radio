@@ -37,7 +37,6 @@ function RadioPlayer() {
 } = usePlayer();
 
   function onReady(event) {
-    console.log(resumePosition);
     if (resumePosition > 15) {
       event.target.seekTo(resumePosition, true);
     }

@@ -10,7 +10,6 @@ export function getSessionId() {
         sessionId = generateSessionId();
         window.localStorage.setItem(SESSION_STORAGE_KEY, sessionId);
     }
-    console.log(sessionId)
 
     return sessionId;
 }

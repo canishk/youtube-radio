@@ -22,7 +22,7 @@ from app.api.video_routes import router as video_router
 from app.api.session_routes import router as session_router
 from app.api.admin_routes import router as admin_router
 from app.api.admin_auth_routes import router as admin_auth_router
-
+from app.api.config_routes import router as config_router
 
 
 load_dotenv()
@@ -69,3 +69,4 @@ app.include_router(session_router)
 
 app.include_router(admin_router)
 app.include_router(admin_auth_router)
+app.include_router(config_router)
