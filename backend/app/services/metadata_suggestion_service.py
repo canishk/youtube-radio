@@ -57,9 +57,11 @@ TIME_SLOT_RULES = {
 
 def generate_suggestions(
         title: str,
-        movie: str,
+        movie: str = "",
+        channel_name: str = "",
+        description: str = "",
 ):
-    text = f"{title or ''} {movie or ''}".lower()
+    text = f"{title or ''} {movie or ''} {channel_name or ''} {description or ''}".lower()
     moods = []
 
     for mood, keywords in MOOD_RULES.items():
@@ -90,7 +92,7 @@ def generate_suggestions(
         "priority": priority
     }
 
-def save_suggestions(
+def save_suggestion(
         db,
         song_id: int,
         suggestion: dict,
@@ -112,7 +114,7 @@ def generate_and_save(
         song
 ):
     suggestion = generate_suggestions(song.title, song.movie)
-    return save_suggestions(db, song.id, suggestion)
+    return save_suggestion(db, song.id, suggestion)
 
 
 def get_latest_suggestion(db, song_id: int):

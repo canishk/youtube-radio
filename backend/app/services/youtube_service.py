@@ -44,6 +44,7 @@ def fetch_video_metadata(video_id: str):
         "video_id": video_id,
         "title": item["snippet"]["title"],
         "channel": item["snippet"]["channelTitle"],
+        "description": item["snippet"]["description"],
         "thumbnail": item["snippet"]["thumbnails"]["high"]["url"],
         "duration_raw": duration_raw,
         "duration_display": f"{minutes}:{seconds:02d}"
