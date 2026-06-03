@@ -10,27 +10,35 @@ MOOD_RULES = {
     "sad": ["sad", "alone", "missing", "breakup"],
     "devotional": ["god", "bhajan", "devotional"],
     "workout": ["gym", "workout", "fitness"],
-    "chill": ["lofi", "acoustic", "relax"],
+    "melody": ["lofi", "acoustic", "relax"],
+    "peaceful": ["peaceful", "calm", "meditation"],
+    "friendship": ["friendship", "friends", "bff"],
 }
 
 ENERGY_RULES = {
     9: ["party", "dance", "dj", "remix"],
     7: ["rock", "workout", "gym"],
     5: ["melody", "love", "romantic"],
-    3: ["soft", "acoustic", "chill"],
+    3: ["soft", "acoustic", "melody"],
     1: ["sad", "devotional"]
 }
 
 
 TIME_SLOT_RULES = {
     "morning": [
-        "devotional",
+        "melody",
         "romantic",
         "morning"
     ],
+    "workday": [
+        "workout",
+        "gym",
+        "focus",
+        "dj"
+    ],
 
     "afternoon": [
-        "chill",
+        "melody",
         "dance",
         "workout"
     ],
@@ -51,6 +59,13 @@ TIME_SLOT_RULES = {
         "sad",
         "devotional",
         "romantic"
+    ],
+    "deep_night": [
+        "sad",
+        "romantic",
+        "friendship",
+        "night",
+        "peaceful"
     ]
 }
 
@@ -68,7 +83,7 @@ def generate_suggestions(
         if any(keyword in text for keyword in keywords):
             moods.append(mood)
         if not moods:
-            moods.append("chill")
+            moods.append("melody")
     
     energy = 3
     for score, keywords in ENERGY_RULES.items():

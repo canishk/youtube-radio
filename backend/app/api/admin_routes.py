@@ -374,6 +374,6 @@ def generate_song_suggestion(
         "song_id": song_id,
         "video_title": metadata.get("title"),
         "channel": metadata.get("channel"),
-        "description": metadata.get("description"),
+        # "description": metadata.get("description"),
         "suggestion": suggestion
     }

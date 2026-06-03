@@ -6,7 +6,7 @@ import {
 } from "../../utils/youtube";
 
 import FormControl from "../ui/FormControl";
-import { fetchYoutubeMetadata } from "../../services/adminApi";
+import { fetchYoutubeMetadata, generateSuggestions } from "../../services/adminApi";
 
 const MOOD_SUGGESTIONS = [
   "melody",
@@ -64,6 +64,9 @@ function SongForm({
   const [duration, setDuration] = useState("");
   const [alreadyExists, setAlreadyExists] = useState(false)
 
+  const [suggestions, setSuggestions] = useState(null);
+  const [generating, setGenerating] = useState(false);
+
   useEffect(() => {
 
     if (!initialData) {
@@ -119,6 +122,25 @@ function SongForm({
     initialData,
     categories
   ]);
+
+  async function handleGenerateSuggestions() {
+    if (!initialData?.id) {
+      alert("Save the Song first");
+      return;
+    }
+    try {
+      setGenerating(true);
+      const result = await generateSuggestions(initialData.id);
+      console.log(result.suggestion);
+      setSuggestions(result.suggestion);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate Suggestions!");
+    } finally {
+      setGenerating(false);
+    }
+    
+  }
 
   async function handleFetchMetadata() {
 
@@ -254,16 +276,16 @@ function SongForm({
   }
 
   return (
-
-    <form
-      onSubmit={handleSubmit}
-      className="
-        bg-slate-900
-        p-6
-        rounded-lg
-        mb-6
-      "
-    >
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="
+          bg-slate-900
+          p-6
+          rounded-lg
+          mb-6
+        "
+      >
 
       <h2
         className="
@@ -590,7 +612,28 @@ function SongForm({
         >
           Save
         </button>
-
+        <button
+          type="button"
+          onClick={
+            handleGenerateSuggestions
+          }
+          disabled={
+            generating
+          }
+          className="
+            px-4
+            py-2
+            rounded
+            bg-purple-600
+            text-white
+          "
+        >
+          {
+            generating
+              ? "Generating..."
+              : "Generate Suggestions"
+          }
+        </button>
         <button
           type="button"
           onClick={onCancel}
@@ -608,6 +651,70 @@ function SongForm({
 
     </form>
 
+    {suggestions && (
+
+        <div
+          className="
+            mt-6
+            p-4
+            rounded
+            bg-slate-800
+          "
+        >
+
+          <h3
+            className="
+              text-lg
+              font-semibold
+              mb-3
+            "
+          >
+            Suggestions
+          </h3>
+
+          <p>
+            <strong>
+              Moods:
+            </strong>{" "}
+            {
+              suggestions.moods.join(
+                ", "
+              )
+            }
+          </p>
+
+          <p>
+            <strong>
+              Time Slots:
+            </strong>{" "}
+            {
+              suggestions.time_slots.join(
+                ", "
+              )
+            }
+          </p>
+
+          <p>
+            <strong>
+              Energy:
+            </strong>{" "}
+            {
+              suggestions.energy
+            }
+          </p>
+
+          <p>
+            <strong>
+              Priority:
+            </strong>{" "}
+            {
+              suggestions.priority
+            }
+          </p>
+
+        </div>
+      )}
+    </>
   );
 }
 
