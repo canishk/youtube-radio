@@ -6,7 +6,7 @@ import {
 } from "../../utils/youtube";
 
 import FormControl from "../ui/FormControl";
-import { fetchYoutubeMetadata, generateSuggestions } from "../../services/adminApi";
+import { fetchYoutubeMetadata, generateSuggestions, generateAISuggestions } from "../../services/adminApi";
 
 const MOOD_SUGGESTIONS = [
   "melody",
@@ -66,6 +66,9 @@ function SongForm({
 
   const [suggestions, setSuggestions] = useState(null);
   const [generating, setGenerating] = useState(false);
+  const [aiSuggestions, setAISuggestions] = useState(null);
+  const [generatingAI, setGeneratingAI] = useState(false);
+
 
   useEffect(() => {
 
@@ -122,6 +125,31 @@ function SongForm({
     initialData,
     categories
   ]);
+
+  async function handleGenerateAISuggestions() {
+
+    if (!initialData?.id) {
+
+      alert("Save the song first.");
+      return;
+    }
+
+    try {
+
+      setGeneratingAI(true);
+
+      const result = await generateAISuggestions(initialData.id);
+
+      setAISuggestions(result.suggestion);
+
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate AI suggestions.");
+
+    } finally {
+      setGeneratingAI(false);
+    }
+  }
 
   async function handleGenerateSuggestions() {
     if (!initialData?.id) {
@@ -634,6 +662,30 @@ function SongForm({
               : "Generate Suggestions"
           }
         </button>
+        
+        <button
+          type="button"
+          onClick={
+            handleGenerateAISuggestions
+          }
+          disabled={
+            generatingAI
+          }
+          className="
+            px-4
+            py-2
+            rounded
+            bg-indigo-600
+            text-white
+          "
+        >
+          {
+            generatingAI
+              ? "Generating AI..."
+              : "Generate AI Suggestions"
+          }
+        </button>
+
         <button
           type="button"
           onClick={onCancel}
@@ -711,6 +763,50 @@ function SongForm({
             {
               suggestions.priority
             }
+          </p>
+
+        </div>
+      )}
+
+      {aiSuggestions && (
+
+        <div
+          className="
+            mt-6
+            p-4
+            rounded
+            bg-indigo-950
+          "
+        >
+
+          <h3
+            className="
+              text-lg
+              font-semibold
+              mb-3
+            "
+          >
+            AI Suggestions
+          </h3>
+
+          <p>
+            <strong>Moods:</strong>{" "}
+            {aiSuggestions.moods.join(", ")}
+          </p>
+
+          <p>
+            <strong>Time Slots:</strong>{" "}
+            {aiSuggestions.time_slots.join(", ")}
+          </p>
+
+          <p>
+            <strong>Energy:</strong>{" "}
+            {aiSuggestions.energy}
+          </p>
+
+          <p>
+            <strong>Priority:</strong>{" "}
+            {aiSuggestions.priority}
           </p>
 
         </div>

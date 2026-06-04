@@ -99,3 +99,10 @@ export async function generateSuggestions(songId) {
   return response.data;
   
 }
+
+export async function generateAISuggestions(songId) {
+  const response = await api.post(
+    `/admin/songs/${songId}/suggest-ai`
+  );
+  return response.data;
+}
