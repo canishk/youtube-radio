@@ -23,6 +23,7 @@ from app.api.session_routes import router as session_router
 from app.api.admin_routes import router as admin_router
 from app.api.admin_auth_routes import router as admin_auth_router
 from app.api.config_routes import router as config_router
+from app.api.stats_routes import router as stats_router
 
 
 load_dotenv()
@@ -70,3 +71,4 @@ app.include_router(session_router)
 app.include_router(admin_router)
 app.include_router(admin_auth_router)
 app.include_router(config_router)
+app.include_router(stats_router)
