@@ -55,6 +55,12 @@ function RadioPlayer() {
     setPlaybackStatus("paused");
   }
 
+  async function handleListenNow(category) {
+    setResumePosition(0);
+    const song = await fetchNextSong(category.id);
+    setCurrentSong(song);
+  }
+
   function handleResume() {
 
     if (!playerRef.current) return;
