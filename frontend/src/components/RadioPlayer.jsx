@@ -274,11 +274,13 @@ async function handlePlayerError(
 
   const opts = {
 
-    height: "0",
-    width: "0",
+    height: "1",
+    width: "1",
 
     playerVars: {
       autoplay: 1,
+      enablejsapi: 1,
+      origin: window.location.origin
     },
   };
 
@@ -417,6 +419,7 @@ async function handlePlayerError(
           key={currentSong.youtube_video_id}
           videoId={currentSong.youtube_video_id}
           opts={opts}
+          iframeClassName="youtube-player"
           onReady={onReady}
           onEnd={handleSongEnd}
           onError={handlePlayerError}

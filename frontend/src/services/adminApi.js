@@ -93,3 +93,16 @@ export async function fetchYoutubeMetadata(youtubeUrl) {
     );
   return response.data;
 }
+
+export async function generateSuggestions(songId) {
+  const response = await api.post(`/admin/songs/${songId}/suggest`);
+  return response.data;
+  
+}
+
+export async function generateAISuggestions(songId) {
+  const response = await api.post(
+    `/admin/songs/${songId}/suggest-ai`
+  );
+  return response.data;
+}

@@ -9,6 +9,9 @@ from app.models.video_health import VideoHealth
 from app.schemas.category_schema import CategoryCreate, CategoryUpdate
 from app.schemas.song_schema import SongCreate, SongUpdate
 from app.services.youtube_service import fetch_video_metadata
+from app.services.metadata_suggestion_service import generate_suggestions
+from app.services.groq_metadata_service import generate_ai_suggestions
+
 from app.utils.youtube import extract_video_id
 
 
@@ -339,3 +342,73 @@ def youtube_metadata(
     metadata["already_exists"] = existing_song is not None
     return metadata
 
+@router.post("/songs/{song_id}/suggest")
+def generate_song_suggestion(
+    song_id: int,
+    db: Session = Depends(get_db)
+):
+    song = db.query(Song).filter(Song.id == song_id).first()
+
+    if not song:
+        raise HTTPException(
+            status_code=404,
+            detail="Song not found"
+        )
+
+    metadata =  fetch_video_metadata(song.youtube_video_id)
+
+    if not metadata:
+        raise HTTPException(
+            status_code=404,
+            detail="Video metadata not found"
+        )
+    suggestion = generate_suggestions(
+        title=metadata.get("title"),
+        movie=metadata.get("movie"),
+        channel_name=metadata.get("channel"),
+        description=metadata.get("description")
+    )
+
+
+    return {
+        "song_id": song_id,
+        "video_title": metadata.get("title"),
+        "channel": metadata.get("channel"),
+        # "description": metadata.get("description"),
+        "suggestion": suggestion
+    }
+
+
+@router.post("/songs/{song_id}/suggest-ai")
+def generate_ai_song_suggestion(
+    song_id: int,
+    db: Session = Depends(get_db)
+):
+    song = db.query(Song).filter(Song.id == song_id).first()
+
+    if not song:
+        raise HTTPException(
+            status_code=404,
+            detail="Song not found"
+        )
+
+    metadata =  fetch_video_metadata(song.youtube_video_id)
+
+    if not metadata:
+        raise HTTPException(
+            status_code=404,
+            detail="Video metadata not found"
+        )
+    suggestion = generate_ai_suggestions(
+        title=metadata.get("title"),
+        movie=metadata.get("movie"),
+        channel_name=metadata.get("channel"),
+        description=metadata.get("description")
+    )
+
+
+    return {
+        "song_id": song_id,
+        "engine": "groq",
+        "suggestion": suggestion
+    }

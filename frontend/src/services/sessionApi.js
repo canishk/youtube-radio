@@ -58,3 +58,13 @@ export async function updateCurrentSong(
 
   return response.data;
 }
+
+export async function getListenerCount() {
+
+  const response =
+    await api.get(
+      "/stats/listeners"
+    );
+
+  return response.data;
+}

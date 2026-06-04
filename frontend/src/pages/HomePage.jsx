@@ -7,7 +7,7 @@ import RadioPlayer from "../components/RadioPlayer";
 import ResumeCard from "../components/ResumeCard";
 import { usePlayer } from "../context/PlayerContext";
 import { fetchNextSong } from "../services/radioEngine";
-import { getCurrentSession } from "../services/sessionApi";
+import { getCurrentSession, getListenerCount } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
 import { shuffleArray } from "../utils/shuffleArray";
 
@@ -18,6 +18,7 @@ function HomePage() {
   const [resumeSong, setResumeSong] = useState(null);
   const [showResumeCard, setShowResumeCard] = useState(false);
   const [resumePosition, setResumePosition] = useState(0);
+  const [listenerCount, setListenerCount] = useState(0);
   const {
     currentSong,
     setCurrentSong,
@@ -37,6 +38,7 @@ function HomePage() {
   useEffect(() => {
     // fetchCategories();
      initializePage();
+     loadListenerCount();
   }, []);
 
   useEffect(() => {
@@ -58,10 +60,17 @@ function HomePage() {
 
   async function initializePage() {
 
-    const cats =
-      await fetchCategories();
-
+    const cats = await fetchCategories();
     await loadResumeInfo(cats);
+  }
+
+  async function loadListenerCount() {
+    try {
+      const data = await getListenerCount();
+      setListenerCount(data.current_listeners);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function fetchCategories() {
@@ -321,7 +330,6 @@ if (storedOrder) {
       >
         U-Tube Radio
       </h1>
-
       {showResumeCard &&
         resumeCategory && (
 
@@ -378,11 +386,21 @@ if (storedOrder) {
           />
         ))}
       </div>
-
+      
       {currentSong && (
         <RadioPlayer />
       )}
-
+        <div
+            className="
+              text-right
+              text-xs
+              text-slate-600
+              mt-8
+              pr-4
+            "
+          >
+            {listenerCount} listeners online
+          </div>
     </div>
   );
 }
