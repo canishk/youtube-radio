@@ -26,10 +26,12 @@ SUPPORTED_MOODS = [
 
 SUPPORTED_TIME_SLOTS = [
     "morning",
+    "workday",
     "afternoon",
     "evening",
     "night",
-    "late_night"
+    "late_night",
+    "deep_night"
 ]
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
