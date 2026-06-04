@@ -19,6 +19,7 @@ function HomePage() {
   const [showResumeCard, setShowResumeCard] = useState(false);
   const [resumePosition, setResumePosition] = useState(0);
   const [listenerCount, setListenerCount] = useState(0);
+  const [isResumeMode, setIsResumeMode] = useState(false);
   const {
     currentSong,
     setCurrentSong,
@@ -233,6 +234,7 @@ if (storedOrder) {
     setResumePosition(0);
     setPlayerResumePosition(0);
     setShowResumeCard(false);
+    setIsResumeMode(false);
     setCurrentSong(null);
     setCurrentCategory(null);
     handleSelectCategory(resumeCategory);
@@ -256,6 +258,8 @@ if (storedOrder) {
 
       setLoading(true);
       setCurrentSong(null);
+      setPlayerResumePosition(0);
+      setIsResumeMode(false);
 
       const song =
         await fetchNextSong(
