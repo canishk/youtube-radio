@@ -682,6 +682,7 @@ function SongForm({
               )
             }
           </p>
+          <p><strong>Confidence: </strong>{" "}{suggestions.confidence}%</p>
 
           <p>
             <strong>

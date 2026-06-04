@@ -2,67 +2,172 @@ import json
 
 
 MOOD_RULES = {
-    "party": ["party", "celebration", "club"],
-    "dance": ["dance", "remix", "dj"],
-    "romantic": ["love", "romantic", "heart"],
-    "sad": ["sad", "alone", "missing", "breakup"],
-    "devotional": ["god", "bhajan", "devotional"],
-    "workout": ["gym", "workout", "fitness"],
-    "melody": ["lofi", "acoustic", "relax"],
-    "peaceful": ["peaceful", "calm", "meditation"],
-    "friendship": ["friendship", "friends", "bff"],
+
+    "melody": [
+        "melody",
+        "melodies",
+        "soft songs"
+    ],
+
+    "travel": [
+        "travel",
+        "journey",
+        "road trip",
+        "roadtrip",
+        "drive"
+    ],
+
+    "rain": [
+        "rain",
+        "mazha",
+        "monsoon"
+    ],
+
+    "romantic": [
+        "love",
+        "romantic",
+        "heart",
+        "valentine"
+    ],
+
+    "sad": [
+        "sad",
+        "alone",
+        "missing",
+        "broken"
+    ],
+
+    "energetic": [
+        "energy",
+        "energetic",
+        "workout",
+        "gym",
+        "motivation",
+        "fitness"
+    ],
+
+    "party": [
+        "party",
+        "celebration",
+        "club"
+    ],
+
+    "devotional": [
+        "god",
+        "bhajan",
+        "devotional",
+        "krishna",
+        "shiva",
+        "allah",
+        "jesus",
+        "temple"
+    ],
+
+    "nostalgia": [
+        "retro",
+        "classic",
+        "80s",
+        "90s",
+        "old hits",
+        "evergreen"
+    ],
+
+    "friendship": [
+        "friend",
+        "friends",
+        "friendship"
+    ],
+
+    "motivation": [
+        "motivation",
+        "motivational",
+        "success",
+        "winner",
+        "inspire"
+    ],
+
+    "dance": [
+        "dance",
+        "remix",
+        "dj",
+        "mix"
+    ],
+
+    "night": [
+        "night",
+        "late night",
+        "midnight"
+    ],
+
+    "peaceful": [
+        "peaceful",
+        "relax",
+        "calm",
+        "lofi",
+        "acoustic",
+        "instrumental"
+    ]
 }
 
 ENERGY_RULES = {
-    9: ["party", "dance", "dj", "remix"],
-    7: ["rock", "workout", "gym"],
-    5: ["melody", "love", "romantic"],
-    3: ["soft", "acoustic", "melody"],
-    1: ["sad", "devotional"]
+
+    5: [
+        "party",
+        "dance",
+        "dj",
+        "remix",
+        "workout",
+        "gym"
+    ],
+
+    4: [
+        "motivation",
+        "travel",
+        "roadtrip"
+    ],
+
+    3: [
+        "melody",
+        "romantic"
+    ],
+
+    2: [
+        "peaceful",
+        "acoustic",
+        "instrumental"
+    ],
+
+    1: [
+        "sad",
+        "devotional"
+    ]
 }
 
-
 TIME_SLOT_RULES = {
+
     "morning": [
-        "melody",
-        "romantic",
-        "morning"
-    ],
-    "workday": [
-        "workout",
-        "gym",
-        "focus",
-        "dj"
+        "devotional",
+        "motivation"
     ],
 
     "afternoon": [
-        "melody",
-        "dance",
-        "workout"
+        "travel",
+        "friendship"
     ],
 
     "evening": [
-        "romantic",
         "melody",
-        "party"
+        "romantic"
     ],
 
     "night": [
         "party",
         "dance",
-        "dj"
+        "night"
     ],
 
     "late_night": [
         "sad",
-        "devotional",
-        "romantic"
-    ],
-    "deep_night": [
-        "sad",
-        "romantic",
-        "friendship",
-        "night",
         "peaceful"
     ]
 }
@@ -98,10 +203,13 @@ def generate_suggestions(
     
     priority = min(10, max(5, len(moods) + energy))
 
+    confidence = min(100, (len(moods) * 20 + len(time_slots) * 5))
+
     return {
         "moods": moods,
         "time_slots": time_slots,
         "energy": energy,
-        "priority": priority
+        "priority": priority,
+        "confidence": confidence
     }
 
