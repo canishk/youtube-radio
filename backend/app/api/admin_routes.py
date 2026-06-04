@@ -9,7 +9,7 @@ from app.models.video_health import VideoHealth
 from app.schemas.category_schema import CategoryCreate, CategoryUpdate
 from app.schemas.song_schema import SongCreate, SongUpdate
 from app.services.youtube_service import fetch_video_metadata
-from app.services.metadata_suggestion_service import generate_suggestions, save_suggestion
+from app.services.metadata_suggestion_service import generate_suggestions
 
 from app.utils.youtube import extract_video_id
 
@@ -368,7 +368,6 @@ def generate_song_suggestion(
         description=metadata.get("description")
     )
 
-    save_suggestion(db, song_id, suggestion)
 
     return {
         "song_id": song_id,

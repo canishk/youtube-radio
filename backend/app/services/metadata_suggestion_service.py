@@ -1,7 +1,5 @@
 import json
 
-from app.models.metadata_suggestion import MetadataSuggestion
-
 
 MOOD_RULES = {
     "party": ["party", "celebration", "club"],
@@ -106,32 +104,4 @@ def generate_suggestions(
         "energy": energy,
         "priority": priority
     }
-
-def save_suggestion(
-        db,
-        song_id: int,
-        suggestion: dict,
-):
-    record = MetadataSuggestion(
-        song_id=song_id,
-        suggested_moods=json.dumps(suggestion["moods"]),
-        suggested_time_slots=json.dumps(suggestion["time_slots"]),
-        suggested_energy=suggestion["energy"],
-        suggested_priority=suggestion["priority"],
-        suggestion_source="rules",
-    )
-    db.add(record)
-    db.commit()
-    return record
-
-def generate_and_save(
-        db,
-        song
-):
-    suggestion = generate_suggestions(song.title, song.movie)
-    return save_suggestion(db, song.id, suggestion)
-
-
-def get_latest_suggestion(db, song_id: int):
-    return db.query(MetadataSuggestion).filter_by(song_id=song_id).order_by(MetadataSuggestion.created_at.desc()).first()
 

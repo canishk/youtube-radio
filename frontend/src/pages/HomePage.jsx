@@ -330,16 +330,6 @@ if (storedOrder) {
       >
         U-Tube Radio
       </h1>
-      <div
-        className="
-          text-center
-          text-sm
-          text-slate-400
-          mb-4
-        "
-      >
-        🎧 {listenerCount} listeners online
-      </div>
       {showResumeCard &&
         resumeCategory && (
 
@@ -396,11 +386,21 @@ if (storedOrder) {
           />
         ))}
       </div>
-
+      
       {currentSong && (
         <RadioPlayer />
       )}
-
+        <div
+            className="
+              text-right
+              text-xs
+              text-slate-600
+              mt-8
+              pr-4
+            "
+          >
+            {listenerCount} listeners online
+          </div>
     </div>
   );
 }
