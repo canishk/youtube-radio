@@ -106,3 +106,8 @@ export async function generateAISuggestions(songId) {
   );
   return response.data;
 }
+
+export async function getDashboardData() {
+  const response = await api.get(`/admin/dashboard`);
+  return response.data;
+}
