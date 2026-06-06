@@ -111,3 +111,8 @@ export async function getDashboardData() {
   const response = await api.get(`/admin/dashboard`);
   return response.data;
 }
+
+export async function getMetadataGaps() {
+  const response = await api.get("/admin/dashboard/metadata-gaps");
+  return response.data;
+}

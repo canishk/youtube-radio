@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 
-import { getDashboardData } from "../../services/adminApi";
+import { getDashboardData, getMetadataGaps } from "../../services/adminApi";
 
 const DashboardCard = ({ title, value }) => (
-  <div className="p-4 bg-green rounded shadow border">
+  <div className="p-4 bg-black-50 rounded shadow border">
     <div className="text-sm text-gray-500">{title}</div>
     <div className="text-2xl font-bold">{value}</div>
   </div>
@@ -12,12 +12,19 @@ const DashboardCard = ({ title, value }) => (
 function AdminDashboard() {
 
   const [dashboard, setDashboard] = useState(null);
+  const [metadataGaps, setMetadataGaps] = useState([]);
+  
   useEffect(() => {
     async function load() {
       try {
-        const data = await getDashboardData();
-        setDashboard(data);
+
+        const [ dashboardData, gapsData ] = await Promise.all([getDashboardData(),getMetadataGaps()]);
+
+        setDashboard(dashboardData);
+        setMetadataGaps(gapsData);
+
       } catch (error) {
+
         console.error(error);
       }
     }
@@ -84,19 +91,44 @@ function AdminDashboard() {
           >
 
             <div>
-              Missing Moods: {dashboard.metadata.missing_moods}
+              Missing Moods:
+              <span className="font-semibold ml-2">
+                {dashboard.metadata.missing_moods}
+              </span>
+
+              <span className="text-sm text-gray-500 ml-2">
+                ({dashboard.metadata.mood_coverage}% coverage)
+              </span>
             </div>
 
             <div>
-              Missing Time Slots: {dashboard.metadata.missing_time_slots}
+              Missing Time Slots: 
+              <span className="font-semibold ml-2">
+                {dashboard.metadata.missing_time_slots}
+              </span>
+              <span className="text-sm text-gray-500 ml-2">
+                {dashboard.metadata.time_slot_coverage}
+              </span>
             </div>
 
             <div>
-              Missing Energy: {dashboard.metadata.missing_energy}
+              Missing Energy:
+              <span className="font-semibold m1-2">
+                {dashboard.metadata.missing_energy}
+              </span>
+              <span className="text-sm text-gray-500 ml-2">
+                {dashboard.metadata.energy_coverage}
+              </span>
             </div>
 
             <div>
-              Missing Priority: {dashboard.metadata.missing_priority}
+              Missing Priority: 
+              <span className="font-semibold m1-2">
+                {dashboard.metadata.missing_priority}
+              </span>
+              <span className="text-sm text-gray-500 ml-2">
+                {dashboard.metadata.priority_coverage}
+              </span>
             </div>
 
           </div>
@@ -156,6 +188,110 @@ function AdminDashboard() {
             </tbody>
 
           </table>
+
+        </div>
+      )}
+
+      {metadataGaps.length > 0 && (
+
+        <div className="mt-8 rounded border p-4">
+
+          <h2
+            className="
+              text-xl
+              font-semibold
+              mb-4
+            "
+          >
+            Metadata Gap Explorer
+          </h2>
+
+          <div className="overflow-x-auto">
+
+            <table className="w-full text-left">
+
+              <thead>
+
+                <tr>
+
+                  <th className="pb-2">
+                    Song
+                  </th>
+
+                  <th className="pb-2">
+                    Movie
+                  </th>
+
+                  <th className="pb-2">
+                    Missing Fields
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {metadataGaps.map(song => (
+
+                  <tr
+                    key={song.song_id}
+                    className="border-t"
+                  >
+
+                    <td className="py-2">
+                      {song.title || "-"}
+                    </td>
+
+                    <td className="py-2">
+                      {song.movie || "-"}
+                    </td>
+
+                    <td className="py-2">
+
+                      <span
+                        className="
+                          text-red-600
+                          font-medium
+                        "
+                      >
+                        {song.missing_fields.join(", ")}
+                      </span>
+
+                    </td>
+
+                  </tr>
+
+                ))}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+      )}
+
+      {metadataGaps.length === 0 && (
+
+        <div className="mt-8 rounded border p-4">
+
+          <h2
+            className="
+              text-xl
+              font-semibold
+              mb-2
+            "
+          >
+            Metadata Gap Explorer
+          </h2>
+
+          <div className="text-green-600">
+
+            ✓ No metadata gaps found.
+
+          </div>
 
         </div>
       )}

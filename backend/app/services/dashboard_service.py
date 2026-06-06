@@ -6,7 +6,7 @@ from app.models.category import Category
 from app.models.video_health import VideoHealth
 from app.db.session import get_db
 
-def get_dashboard_data(db:Session = Depends(get_db)):
+def get_dashboard_data(db:Session):
     total_songs = db.query(Song).count()
     total_categories = db.query(Category).count()
     failed_video = db.query(VideoHealth).filter(VideoHealth.is_playable == False).count()
@@ -54,8 +54,33 @@ def get_dashboard_data(db:Session = Depends(get_db)):
         "category_health": category_health
     }
 
-# def get_dashboard_data(db:Session = Depends(get_db)):
-#     total_songs = db.query(Song).count()
-#     return {
-#         "total_songs": total_songs
-#     }
+def get_metadata_gaps(db:Session):
+
+    songs = db.query(Song).all()
+    
+    results = []
+    for song in songs:
+        missing_fields = []
+
+        if not song.moods:
+            missing_fields.append("moods")
+
+        if not song.time_slots:
+            missing_fields.append("time_slots")
+
+        if not song.energy:
+            missing_fields.append("energy")
+
+        if song.priority is None:
+            missing_fields.append("priority")
+
+        if missing_fields:
+            results.append({
+                "song_id":song.id,
+                "title":song.title,
+                "movie":song.movie,
+                "category_id":song.category_id,
+                "missing_fields":missing_fields
+            })
+
+    return results
