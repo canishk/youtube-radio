@@ -11,11 +11,12 @@ from app.schemas.song_schema import SongCreate, SongUpdate
 from app.services.youtube_service import fetch_video_metadata
 from app.services.metadata_suggestion_service import generate_suggestions
 from app.services.groq_metadata_service import generate_ai_suggestions
+from app.services.dashboard_service import get_dashboard_data, get_metadata_gaps
 
 from app.utils.youtube import extract_video_id
 
 
-router = APIRouter(prefix="/admin", tags=["Admin Categories"])
+router = APIRouter(prefix="/admin", tags=["Admin"])
 
 @router.get("/categories")
 def get_categories(
@@ -132,6 +133,26 @@ def delete_category(
     return {
         "status": "deleted"
     }
+
+@router.put("/categories/{category_id}/toggle")
+def toggle_category(
+    category_id: str,
+    db: Session = Depends(get_db)
+):
+
+    category = db.query(Category).filter(Category.id == category_id).first()
+
+    if not category:
+        raise HTTPException(
+            status_code=404,
+            detail="Category not found"
+        )
+
+    category.enabled = not category.enabled
+    db.commit()
+    db.refresh(category)
+
+    return category
 
 @router.get("/songs")
 def get_songs(
@@ -412,3 +433,19 @@ def generate_ai_song_suggestion(
         "engine": "groq",
         "suggestion": suggestion
     }
+@router.get("/dashboard")
+def dashboard(
+    db: Session = Depends(get_db)
+):
+    try:
+        data = get_dashboard_data(db)
+        return data
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/dashboard/metadata-gaps")
+def metadata_gaps(db: Session = Depends(get_db)):
+    return get_metadata_gaps(db)
+

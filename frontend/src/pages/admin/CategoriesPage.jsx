@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import {getCategories, createCategory, updateCategory, deleteCategory} from "../../services/adminApi";
+import {getCategories, createCategory, updateCategory, deleteCategory, toggleCategory} from "../../services/adminApi";
 
 import CategoryForm from "../../components/admin/CategoryForm";
 
@@ -39,6 +39,11 @@ function CategoriesPage() {
     await loadCategories();
   }
 
+  async function handleToggle(categoryId) {
+    await toggleCategory(categoryId);
+    await loadCategories();
+  }
+
   return (
     <div className="p-6">
       {showForm && (
@@ -59,9 +64,27 @@ function CategoriesPage() {
       {categories.map((category) => (
         <div
           key={category.id}
-          className="bg-slate-900 p-4 rounded-lg mb-3"
+          className={`
+            p-4 rounded-lg mb-3
+            ${category.enabled ? "bg-slate-900" : "bg-slate-600 opacity-40"}
+          `}
         >
           <h3>{category.name}</h3>
+          <div className="mt-1 mb-2">
+
+            <span className={
+                category.enabled
+                  ? "text-green-500"
+                  : "text-red-500"
+              }
+            >
+              {
+                category.enabled
+                  ? "Enabled"
+                  : "Disabled"
+              }
+            </span>
+          </div>
           <p>{category.description}</p>
           <div className="flex gap-3 mt-3">
             <button
@@ -69,6 +92,26 @@ function CategoriesPage() {
               className="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600"
             >
               Edit
+            </button>
+            <button
+              onClick={() =>
+                handleToggle(
+                  category.id
+                )
+              }
+              className={
+                category.enabled
+                  ? "bg-yellow-600 px-3 py-1 rounded hover:bg-yellow-700"
+                  : "bg-green-600 px-3 py-1 rounded hover:bg-green-700"
+              }
+            >
+
+              {
+                category.enabled
+                  ? "Disable"
+                  : "Enable"
+              }
+
             </button>
             <button
               onClick={() => handleDelete(category.id)}

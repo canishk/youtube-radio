@@ -6,6 +6,7 @@ class CategoryBase(BaseModel):
     description: Optional[str] = None
     thumbnail: Optional[str] = None
     auto_mode: Optional[str] = "time-aware"
+    enabled: bool = True
 
 class CategoryResponse(CategoryBase):
     id: str

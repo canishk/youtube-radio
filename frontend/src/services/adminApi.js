@@ -49,6 +49,18 @@ export async function deleteCategory(
   return response.data;
 }
 
+export async function toggleCategory(
+  categoryId
+) {
+
+  const response =
+    await api.put(
+      `/admin/categories/${categoryId}/toggle`
+    );
+
+  return response.data;
+}
+
 export async function getSongs() {
 
   const response =
@@ -104,5 +116,15 @@ export async function generateAISuggestions(songId) {
   const response = await api.post(
     `/admin/songs/${songId}/suggest-ai`
   );
+  return response.data;
+}
+
+export async function getDashboardData() {
+  const response = await api.get(`/admin/dashboard`);
+  return response.data;
+}
+
+export async function getMetadataGaps() {
+  const response = await api.get("/admin/dashboard/metadata-gaps");
   return response.data;
 }

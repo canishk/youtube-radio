@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 import os
+from fastapi.responses import PlainTextResponse
 
 from app.core.scheduler import start_scheduler
 from app.db.database import engine, Base
@@ -41,6 +42,13 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title=os.getenv("APP_NAME"), version=os.getenv("API_VERSION"), lifespan=lifespan)
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    import traceback
+    traceback.print_exc()
+    return PlainTextResponse(str(exc), status_code=500)
 
 app.add_middleware(
     CORSMiddleware,

@@ -79,8 +79,8 @@ def generate_ai_suggestions(
         }
 
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        temperature=0.2,
+        model="groq/compound-mini",
+        temperature=0.1,
         messages = [
             {
                 "role": "user",
