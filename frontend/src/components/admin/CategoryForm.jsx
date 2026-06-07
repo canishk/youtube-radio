@@ -7,21 +7,10 @@ function CategoryForm({
   onCancel
 }) {
 
-  const [id, setId] =
-    useState(
-      initialData?.id || ""
-    );
-
-  const [name, setName] =
-    useState(
-      initialData?.name || ""
-    );
-
-  const [description,
-    setDescription] =
-    useState(
-      initialData?.description || ""
-    );
+  const [id, setId] = useState(initialData?.id || "");
+  const [name, setName] = useState(initialData?.name || "");
+  const [description, setDescription] = useState(initialData?.description || "");
+  const [enabled, setEnabled] = useState(initialData?.enabled ?? true);
 
   async function handleSubmit(
     event
@@ -34,7 +23,8 @@ function CategoryForm({
       name,
       description,
       thumbnail: "",
-      auto_mode: "time-aware"
+      auto_mode: "time-aware",
+      enabled
     });
   }
 
@@ -87,6 +77,15 @@ function CategoryForm({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+
+        <label className="flex items-center gap-2 mt-2">
+          <input
+            type="checkbox"
+            checked={enabled}
+            onChange={(e) => setEnabled(e.target.checked)}
+          />
+          Enabled
+        </label>
 
       </div>
 

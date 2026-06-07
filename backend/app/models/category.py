@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String
+from sqlalchemy import Column,String, Boolean
 from app.db.database import Base
 
 class Category(Base):
@@ -9,4 +9,5 @@ class Category(Base):
     description = Column(String, nullable=True)
     thumbnail = Column(String, nullable=True)
     auto_mode = Column(String, default="time-aware")
+    enabled  = Column(Boolean, nullable=False ,default=True)
 

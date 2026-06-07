@@ -134,6 +134,26 @@ def delete_category(
         "status": "deleted"
     }
 
+@router.put("/categories/{category_id}/toggle")
+def toggle_category(
+    category_id: str,
+    db: Session = Depends(get_db)
+):
+
+    category = db.query(Category).filter(Category.id == category_id).first()
+
+    if not category:
+        raise HTTPException(
+            status_code=404,
+            detail="Category not found"
+        )
+
+    category.enabled = not category.enabled
+    db.commit()
+    db.refresh(category)
+
+    return category
+
 @router.get("/songs")
 def get_songs(
     db: Session = Depends(get_db)

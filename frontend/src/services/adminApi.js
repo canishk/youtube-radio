@@ -49,6 +49,18 @@ export async function deleteCategory(
   return response.data;
 }
 
+export async function toggleCategory(
+  categoryId
+) {
+
+  const response =
+    await api.put(
+      `/admin/categories/${categoryId}/toggle`
+    );
+
+  return response.data;
+}
+
 export async function getSongs() {
 
   const response =
