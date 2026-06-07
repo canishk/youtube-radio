@@ -325,15 +325,11 @@ if (storedOrder) {
 
     <div className="p-6 pb-52">
 
-      <h1
-        className="
-          text-3xl
-          font-bold
-          mb-6
-        "
-      >
-        U-Tube Radio
-      </h1>
+      <div className="flex items-center gap-3">
+        <h1 className="text-3xl font-bold">U-Tube Radio</h1>
+        <img src="/logo.png" alt="U-Tube Radio" className="h-10 w-10" />
+      </div>
+
       {showResumeCard &&
         resumeCategory && (
 
