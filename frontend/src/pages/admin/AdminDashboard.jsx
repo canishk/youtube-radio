@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { getAnalyticsSummary, getDashboardData, getMetadataGaps } from "../../services/adminApi";
+import { getCurrentListeners } from "../../services/listenerApi";
 
 const DashboardCard = ({ title, value }) => (
   <div className="p-4 bg-black-50 rounded shadow border">
@@ -14,6 +15,17 @@ function AdminDashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [metadataGaps, setMetadataGaps] = useState([]);
   const [analytics, setAnalytics] = useState(null);
+  const [currentListeners, setCurrentListeners] = useState(0);
+
+
+  async function loadCurrentListeners() {
+    try {
+      const data = await getCurrentListeners();
+      setCurrentListeners(data.current_listeners || 0);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   
   useEffect(() => {
     async function load() {
@@ -30,6 +42,13 @@ function AdminDashboard() {
       }
     }
     load();
+    loadCurrentListeners();
+  }, []);
+
+  useEffect(() => {
+    loadCurrentListeners();
+    const interval = setInterval(loadCurrentListeners, 60000);
+    return() => clearInterval(interval);
   }, []);
 
   return (
@@ -60,11 +79,8 @@ function AdminDashboard() {
         >
 
           <DashboardCard title="Songs" value={dashboard.overview.total_songs} />
-
           <DashboardCard title="Categories" value={dashboard.overview.total_categories} />
-
           <DashboardCard title="Healthy" value={dashboard.overview.total_video_health} />
-
           <DashboardCard title="Failed" value={dashboard.overview.failed_video} />
 
         </div>
@@ -157,6 +173,7 @@ function AdminDashboard() {
               gap-4
             "
           >
+            <DashboardCard title="Current Listeners" value={currentListeners} />
             <DashboardCard title="Total Plays"value={analytics.plays}/>
             <DashboardCard title="Completions" value={analytics.completions}/>
             <DashboardCard title="Completion Rate" value={`${analytics.completion_rate}%`}/>

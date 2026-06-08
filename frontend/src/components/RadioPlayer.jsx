@@ -127,17 +127,17 @@ function RadioPlayer() {
 
     } else {
 
-        nextSong =
-        await fetchNextSong(
-            categoryId
-        );
+        nextSong = await fetchNextSong(categoryId,song_id);
+        console.log(nextSong.id);
     }
 
     if (!nextSong) return;
+    console.log("Song Ended", currentSong.title);
+    console.log("Next Song", nextSong.title);
     setCurrentSong(nextSong);
     const additionalSong =
         await fetchNextSong(
-        categoryId
+        categoryId, song_id
         );
 
     if (additionalSong) {
@@ -313,7 +313,7 @@ async function handlePlayerError(
         handleBeforeUnload
       );
     };
-
+  console.log("Curret Song Changed", currentSong?.title);
   }, [currentSong]);
 
   const opts = {

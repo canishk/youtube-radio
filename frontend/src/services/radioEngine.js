@@ -2,10 +2,16 @@ import api from "./api";
 import { getSessionId } from "./sessionService";
 
 export async function fetchNextSong(
-  categoryId
+  categoryId,
+  songId,
+  attempts = 0
 ) {
 
   try {
+
+    if (attempts > 3) {
+      return null;
+    }
 
     const hour = new Date().getHours();
     const sessionId = getSessionId();
@@ -13,7 +19,9 @@ export async function fetchNextSong(
     const response = await api.get(
         `/stream/${categoryId}?hour=${hour}&session_id=${sessionId}`
       );
-
+    if (response.data.id == songId) {
+      return await fetchNextSong(categoryId, songId, attempts+1);
+    }
     return response.data;
 
   } catch (error) {
