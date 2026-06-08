@@ -11,6 +11,7 @@ import { getCurrentSession, getListenerCount } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
 import { shuffleArray } from "../utils/shuffleArray";
 import { trackEvent } from "../services/analyticsApi";
+import { getCurrentListeners } from "../services/listenerApi";
 
 function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -40,7 +41,6 @@ function HomePage() {
   useEffect(() => {
     // fetchCategories();
      initializePage();
-     loadListenerCount();
   }, []);
 
   useEffect(() => {
@@ -68,12 +68,18 @@ function HomePage() {
 
   async function loadListenerCount() {
     try {
-      const data = await getListenerCount();
+      const data = await getCurrentListeners();
       setListenerCount(data.current_listeners);
     } catch (error) {
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    loadListenerCount();
+    const interval = setInterval(loadListenerCount, 60000);
+    return () => clearInterval(interval)
+  },[]);
 
   async function fetchCategories() {
 
@@ -392,21 +398,10 @@ if (storedOrder) {
           />
         ))}
       </div>
-      
+      <div className="text-sm text-slate-400 mb-4">{listenerCount} 🎧 </div>
       {currentSong && (
         <RadioPlayer />
       )}
-        <div
-            className="
-              text-right
-              text-xs
-              text-slate-600
-              mt-8
-              pr-4
-            "
-          >
-            {listenerCount} listeners online
-          </div>
     </div>
   );
 }
