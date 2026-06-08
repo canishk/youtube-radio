@@ -103,6 +103,7 @@ function RadioPlayer() {
 
   async function handleSongEnd() {
     await updatePlaybackPosition(getSessionId(), currentSong.id, 0)
+    setResumePosition(0);
     const categoryId = currentCategory?.id ?? currentCategory;
     if (!categoryId) return;
 
@@ -111,7 +112,7 @@ function RadioPlayer() {
     await trackEvent({
       event: "song_complete",
       song_id: currentSong.id,
-      category_id: currentSong.category_id
+      category_id: categoryId
     });
 
     if (queue.length > 0) {
@@ -186,7 +187,11 @@ async function handlePlayerError(
       if (!song) {
         return;
       }
-
+      const trackedSongRef = useRef(null);
+      if (trackedSongRef.current == song.id) {
+        return;
+      }
+      trackedSongRef.current = song.id;
       try {
 
         await updateCurrentSong(
@@ -197,8 +202,8 @@ async function handlePlayerError(
 
         await trackEvent({
           event: "song_play",
-          song_id: currentSong.id,
-          category_id: currentSong.category_id
+          song_id: song.id,
+          category_id: song.category_id
         });
 
       } catch (error) {
