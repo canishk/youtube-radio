@@ -6,6 +6,7 @@ import { usePlayer } from "../context/PlayerContext";
 import { fetchNextSong } from "../services/radioEngine";
 import { updateCurrentSong, updatePlaybackPosition } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
+import { trackEvent } from "../services/analyticsApi";
 import api from "../services/api";
 
 function RadioPlayer() {
@@ -39,6 +40,11 @@ function RadioPlayer() {
   function onReady(event) {
     if (resumePosition > 15) {
       event.target.seekTo(resumePosition, true);
+      trackEvent({
+        event: "song_resume",
+        song_id: currentSong.id,
+        category_id: currentSong.category_id
+      });
     }
     playerRef.current = event.target;
     event.target.setVolume(volume);
@@ -57,6 +63,7 @@ function RadioPlayer() {
 
   async function handleListenNow(category) {
     setResumePosition(0);
+    
     const song = await fetchNextSong(category.id);
     setCurrentSong(song);
   }
@@ -100,6 +107,12 @@ function RadioPlayer() {
     if (!categoryId) return;
 
     let nextSong = null;
+    
+    await trackEvent({
+      event: "song_complete",
+      song_id: currentSong.id,
+      category_id: currentSong.category_id
+    });
 
     if (queue.length > 0) {
 
@@ -181,6 +194,12 @@ async function handlePlayerError(
           song.id,
           currentCategory?.id
         );
+
+        await trackEvent({
+          event: "song_play",
+          song_id: currentSong.id,
+          category_id: currentSong.category_id
+        });
 
       } catch (error) {
 
