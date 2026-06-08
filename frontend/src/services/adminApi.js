@@ -128,3 +128,8 @@ export async function getMetadataGaps() {
   const response = await api.get("/admin/dashboard/metadata-gaps");
   return response.data;
 }
+
+export async function getAnalyticsSummary() {
+  const response = await api.get("/analytics/summary");
+  return response.data;
+}

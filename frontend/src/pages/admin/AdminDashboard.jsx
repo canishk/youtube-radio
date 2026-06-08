@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { getDashboardData, getMetadataGaps } from "../../services/adminApi";
+import { getAnalyticsSummary, getDashboardData, getMetadataGaps } from "../../services/adminApi";
 
 const DashboardCard = ({ title, value }) => (
   <div className="p-4 bg-black-50 rounded shadow border">
@@ -13,16 +13,17 @@ function AdminDashboard() {
 
   const [dashboard, setDashboard] = useState(null);
   const [metadataGaps, setMetadataGaps] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
   
   useEffect(() => {
     async function load() {
       try {
 
         const [ dashboardData, gapsData ] = await Promise.all([getDashboardData(),getMetadataGaps()]);
-
+        const analyticsData = await getAnalyticsSummary();
         setDashboard(dashboardData);
         setMetadataGaps(gapsData);
-
+        setAnalytics(analyticsData);
       } catch (error) {
 
         console.error(error);
@@ -107,7 +108,7 @@ function AdminDashboard() {
                 {dashboard.metadata.missing_time_slots}
               </span>
               <span className="text-sm text-gray-500 ml-2">
-                {dashboard.metadata.time_slot_coverage}
+                ({dashboard.metadata.time_slot_coverage}% coverage)
               </span>
             </div>
 
@@ -117,7 +118,7 @@ function AdminDashboard() {
                 {dashboard.metadata.missing_energy}
               </span>
               <span className="text-sm text-gray-500 ml-2">
-                {dashboard.metadata.energy_coverage}
+                ({dashboard.metadata.energy_coverage}% coverage)
               </span>
             </div>
 
@@ -127,7 +128,7 @@ function AdminDashboard() {
                 {dashboard.metadata.missing_priority}
               </span>
               <span className="text-sm text-gray-500 ml-2">
-                {dashboard.metadata.priority_coverage}
+                ({dashboard.metadata.priority_coverage}% coverage)
               </span>
             </div>
 
@@ -135,7 +136,37 @@ function AdminDashboard() {
 
         </div>
       )}
+      {analytics && (
+        <div className="mb-8">
 
+          <h2
+            className="
+              text-xl
+              font-semibold
+              mb-4
+            "
+          >
+            Listener Analytics
+          </h2>
+
+          <div
+            className="
+              grid
+              grid-cols-2
+              md:grid-cols-3
+              gap-4
+            "
+          >
+            <DashboardCard title="Total Plays"value={analytics.plays}/>
+            <DashboardCard title="Completions" value={analytics.completions}/>
+            <DashboardCard title="Completion Rate" value={`${analytics.completion_rate}%`}/>
+            <DashboardCard title="Resumes"value={analytics.resumes}/>
+            <DashboardCard title="Estimated Skips" value={analytics.estimated_skips}/>
+            <DashboardCard title="Tracked Songs" value={analytics.songs_tracked}/>
+          </div>
+
+        </div>
+      )}
       {dashboard && (
         <div className="mt-6 rounded border">
 

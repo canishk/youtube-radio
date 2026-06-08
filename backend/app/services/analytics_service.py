@@ -74,6 +74,7 @@ def get_analytics_summary(db):
         0,
         plays - completions
     )
+    completion_rate = round((completions/plays) * 100) if plays > 0 else 0
 
     return {
 
@@ -90,6 +91,8 @@ def get_analytics_summary(db):
             estimated_skips,
 
         "resumes":
-            resumes
+            resumes,
+        "completion_rate":
+            completion_rate
     }
 
