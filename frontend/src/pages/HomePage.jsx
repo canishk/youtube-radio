@@ -10,6 +10,7 @@ import { fetchNextSong } from "../services/radioEngine";
 import { getCurrentSession, getListenerCount } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
 import { shuffleArray } from "../utils/shuffleArray";
+import { trackEvent } from "../services/analyticsApi";
 
 function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -253,6 +254,11 @@ if (storedOrder) {
 
       return;
     }
+
+    await trackEvent({
+      event:'category_entered',
+      category_id: category.id
+    })
 
     try {
 
