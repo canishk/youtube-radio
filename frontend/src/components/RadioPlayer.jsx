@@ -137,7 +137,7 @@ function RadioPlayer() {
     setCurrentSong(nextSong);
     const additionalSong =
         await fetchNextSong(
-        categoryId, song_id
+        categoryId, currentSong.id
         );
 
     if (additionalSong) {
