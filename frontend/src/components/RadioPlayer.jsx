@@ -12,6 +12,7 @@ import api from "../services/api";
 function RadioPlayer() {
 
   const playerRef = useRef(null);
+  const trackedSongRef = useRef(null);
 
  const {
 
@@ -187,7 +188,6 @@ async function handlePlayerError(
       if (!song) {
         return;
       }
-      const trackedSongRef = useRef(null);
       if (trackedSongRef.current == song.id) {
         return;
       }
