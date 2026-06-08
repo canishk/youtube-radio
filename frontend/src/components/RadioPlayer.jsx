@@ -7,11 +7,13 @@ import { fetchNextSong } from "../services/radioEngine";
 import { updateCurrentSong, updatePlaybackPosition } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
 import { trackEvent } from "../services/analyticsApi";
+import { sendHeartbeat } from "../services/listenerApi";
 import api from "../services/api";
 
 function RadioPlayer() {
 
   const playerRef = useRef(null);
+  const trackedSongRef = useRef(null);
 
  const {
 
@@ -125,17 +127,17 @@ function RadioPlayer() {
 
     } else {
 
-        nextSong =
-        await fetchNextSong(
-            categoryId
-        );
+        nextSong = await fetchNextSong(categoryId,song_id);
+        console.log(nextSong.id);
     }
 
     if (!nextSong) return;
+    console.log("Song Ended", currentSong.title);
+    console.log("Next Song", nextSong.title);
     setCurrentSong(nextSong);
     const additionalSong =
         await fetchNextSong(
-        categoryId
+        categoryId, song_id
         );
 
     if (additionalSong) {
@@ -187,7 +189,6 @@ async function handlePlayerError(
       if (!song) {
         return;
       }
-      const trackedSongRef = useRef(null);
       if (trackedSongRef.current == song.id) {
         return;
       }
@@ -246,7 +247,20 @@ async function handlePlayerError(
         );
       }
     }
-
+  async function sendListenerHeartbeat() {
+    if (!currentSong || !currentCategory) {
+      return;
+    }
+    await sendHeartbeat({session_id:getSessionId(), song_id:currentSong.id, category_id:currentCategory.id});
+  }
+  useEffect(()=> {
+    if (!isPlaying || !currentSong) {
+      return;
+    }
+    sendListenerHeartbeat();
+    const interval = setInterval(sendListenerHeartbeat, 30000);
+    return () => clearInterval(interval);
+  },[isPlaying, currentSong]);
   useEffect(() => {
     if (currentSong && currentCategory) {
       trackSongStart(currentSong);
@@ -299,7 +313,7 @@ async function handlePlayerError(
         handleBeforeUnload
       );
     };
-
+  console.log("Curret Song Changed", currentSong?.title);
   }, [currentSong]);
 
   const opts = {
