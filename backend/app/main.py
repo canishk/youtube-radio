@@ -26,6 +26,7 @@ from app.api.admin_auth_routes import router as admin_auth_router
 from app.api.config_routes import router as config_router
 from app.api.stats_routes import router as stats_router
 from app.api.analytics import router as analytics_router
+from app.api.listeners import router as listeners_router
 
 
 load_dotenv()
@@ -83,3 +84,4 @@ app.include_router(admin_auth_router)
 app.include_router(config_router)
 app.include_router(stats_router)
 app.include_router(analytics_router)
+app.include_router(listeners_router)
