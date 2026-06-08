@@ -3,7 +3,7 @@ import { getSessionId } from "./sessionService";
 
 export async function fetchNextSong(
   categoryId,
-  songId,
+  songId = null,
   attempts = 0
 ) {
 
@@ -19,7 +19,7 @@ export async function fetchNextSong(
     const response = await api.get(
         `/stream/${categoryId}?hour=${hour}&session_id=${sessionId}`
       );
-    if (response.data.id == songId) {
+    if (songId != null && response.data.id == songId) {
       return await fetchNextSong(categoryId, songId, attempts+1);
     }
     return response.data;
