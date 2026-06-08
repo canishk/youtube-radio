@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS song_statistics (
 );
 
 CREATE TABLE category_statistics (
-    category_id INTEGER PRIMARY KEY,
+    category_id VARCHAR PRIMARY KEY,
     
     entry_count INTEGER NOT NULL DEFAULT 0,
     completion_count INTEGER NOT NULL DEFAULT 0,
