@@ -103,6 +103,7 @@ function RadioPlayer() {
 
   async function handleSongEnd() {
     await updatePlaybackPosition(getSessionId(), currentSong.id, 0)
+    setResumePosition(0);
     const categoryId = currentCategory?.id ?? currentCategory;
     if (!categoryId) return;
 
@@ -111,7 +112,7 @@ function RadioPlayer() {
     await trackEvent({
       event: "song_complete",
       song_id: currentSong.id,
-      category_id: currentSong.category_id
+      category_id: categoryId
     });
 
     if (queue.length > 0) {
