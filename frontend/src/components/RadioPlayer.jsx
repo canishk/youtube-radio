@@ -7,6 +7,7 @@ import { fetchNextSong } from "../services/radioEngine";
 import { updateCurrentSong, updatePlaybackPosition } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
 import { trackEvent } from "../services/analyticsApi";
+import { sendHeartbeat } from "../services/listenerApi";
 import api from "../services/api";
 
 function RadioPlayer() {
@@ -246,7 +247,20 @@ async function handlePlayerError(
         );
       }
     }
-
+  async function sendListenerHeartbeat() {
+    if (!currentSong || !currentCategory) {
+      return;
+    }
+    await sendHeartbeat({session_id:getSessionId(), song_id:currentSong.id, category_id:currentCategory.id});
+  }
+  useEffect(()=> {
+    if (!isPlaying || !currentSong) {
+      return;
+    }
+    sendListenerHeartbeat();
+    const interval = setInterval(sendListenerHeartbeat, 30000);
+    return () => clearInterval(interval);
+  },[isPlaying, currentSong]);
   useEffect(() => {
     if (currentSong && currentCategory) {
       trackSongStart(currentSong);
