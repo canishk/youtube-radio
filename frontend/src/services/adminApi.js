@@ -133,3 +133,18 @@ export async function getAnalyticsSummary() {
   const response = await api.get("/analytics/summary");
   return response.data;
 }
+
+export async function getTopSongs() {
+  const response = await api.get("/analytics/top-songs");
+  return response.data;
+}
+
+export async function getTopCategories() {
+  const response = await api.get("/analytics/top-categories");
+  return response.data;
+}
+
+export async function getTopMoods() {
+  const response = await api.get("/analytics/top-moods");
+  return response.data;
+}
