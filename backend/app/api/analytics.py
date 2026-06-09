@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from app.db.session import get_db
 
 from app.services.analytics_service import track_song_play, track_song_resume, track_song_completion, track_category_entry, get_analytics_summary
+from app.services.analytics_dashboard_service import get_dashboard_data, get_top_songs, get_top_categories, get_top_moods
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
@@ -38,3 +39,18 @@ def analytics_summary(
 
     return get_analytics_summary(db)
 
+@router.get("/top-songs")
+def top_songs(db: Session = Depends(get_db)):
+    return get_top_songs(db)
+
+@router.get("/top-categories")
+def top_categories(db: Session = Depends(get_db)):
+    return get_top_categories(db)
+
+@router.get("/top-moods")
+def top_moods(db: Session = Depends(get_db)):
+    return get_top_moods(db)
+
+@router.get("/dashboard")
+def dashboard(db: Session = Depends(get_db)):
+    return get_dashboard_data(db)
