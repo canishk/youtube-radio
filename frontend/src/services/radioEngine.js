@@ -17,7 +17,7 @@ export async function fetchNextSong(
     const sessionId = getSessionId();
     
     const response = await api.get(
-        `/stream/${categoryId}?hour=${hour}&session_id=${sessionId}`
+        `/stream/${categoryId}?hour=${hour}&session_id=${sessionId}&_t=${Date.now()}`
       );
     if (songId != null && response.data.id == songId) {
       return await fetchNextSong(categoryId, songId, attempts+1);

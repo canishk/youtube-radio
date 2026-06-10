@@ -4,7 +4,8 @@ from pydantic import BaseModel
 
 
 from app.db.session import get_db
-from app.services.session_service import register_session, update_last_category, get_session_info, update_current_song, update_playback_position
+from app.services.session_service import register_session, get_session_info, update_current_song, update_playback_position
+from app.services.history_service import clear_category_play_history
 from app.services.youtube_service import get_thumbnail_url
 
 router = APIRouter(prefix="/session", tags=["Sessions"])
@@ -63,3 +64,16 @@ def save_playback_position(
     if not session:
         raise HTTPException(status_code=404, detail="Session not found.")
     return {"success": True, "message": "Playback position updated successfully."}
+
+class CategoryHistoryResetRequest(BaseModel):
+    session_id: str
+    category_id: str
+
+@router.post("/category-history/reset")
+def reset_category_history(
+    payload: CategoryHistoryResetRequest,
+    db: Session = Depends(get_db),
+):
+    register_session(db, payload.session_id)
+    clear_category_play_history(db, payload.session_id, payload.category_id)
+    return {"success": True}
