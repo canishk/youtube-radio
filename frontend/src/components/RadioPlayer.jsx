@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import YouTube from "react-youtube";
 
 import { usePlayer } from "../context/PlayerContext";
+import { useIsCompactPlayer } from "../hooks/useIsCompactPlayer";
 import { fetchNextSong } from "../services/radioEngine";
 import { HANDOFF_COUNTDOWN_SECONDS } from "./CategoryHandoffCard";
 import { updateCurrentSong, updatePlaybackPosition } from "../services/sessionApi";
@@ -49,15 +50,14 @@ function RadioPlayer() {
 } = usePlayer();
 
   const canSkip = consecutiveSkips < 2;
+  const isCompact = useIsCompactPlayer();
 
   useEffect(() => {
-    if (!currentSong) {
+    if (!currentSong || !isCompact) {
       return;
     }
-    if (window.matchMedia("(max-width: 767px)").matches) {
-      setIsPlayerMinimized(true);
-    }
-  }, [currentSong?.id, setIsPlayerMinimized]);
+    setIsPlayerMinimized(true);
+  }, [currentSong?.id, isCompact, setIsPlayerMinimized]);
 
   function onReady(event) {
     if (resumePosition > 15) {
@@ -406,8 +406,8 @@ function RadioPlayer() {
       "
     >
 
-      {isPlayerMinimized && (
-        <div className="flex md:hidden items-center gap-3">
+      {isCompact && isPlayerMinimized && (
+        <div className="flex items-center gap-3">
           {currentSong?.thumbnail && (
             <img
               src={currentSong.thumbnail}
@@ -444,27 +444,30 @@ function RadioPlayer() {
         </div>
       )}
 
+      {(!isCompact || !isPlayerMinimized) && (
       <div
-        className={`
+        className="
+          flex
           flex-col
           gap-4
           md:flex-row
           md:items-center
           md:justify-between
-          ${isPlayerMinimized ? "hidden md:flex" : "flex"}
-        `}
+        "
       >
 
-        <div className="flex md:hidden justify-end">
-          <button
-            type="button"
-            onClick={() => setIsPlayerMinimized(true)}
-            className="p-2 text-slate-400 hover:text-white"
-            aria-label="Minimize player"
-          >
-            ▼
-          </button>
-        </div>
+        {isCompact && (
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setIsPlayerMinimized(true)}
+              className="p-2 text-slate-400 hover:text-white"
+              aria-label="Minimize player"
+            >
+              ▼
+            </button>
+          </div>
+        )}
 
         <div className="flex flex-wrap items-center gap-2">
 
@@ -587,6 +590,7 @@ function RadioPlayer() {
 
         </div>
       </div>
+      )}
 
       {currentSong && (
         <YouTube

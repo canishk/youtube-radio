@@ -13,6 +13,7 @@ import { getSessionId } from "../services/sessionService";
 import { shuffleArray } from "../utils/shuffleArray";
 import { trackEvent } from "../services/analyticsApi";
 import { getCurrentListeners } from "../services/listenerApi";
+import { useIsCompactPlayer } from "../hooks/useIsCompactPlayer";
 
 function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -45,6 +46,8 @@ function HomePage() {
     isPlayerMinimized,
 
   } = usePlayer();
+
+  const isCompact = useIsCompactPlayer();
 
   useEffect(() => {
     // fetchCategories();
@@ -402,7 +405,7 @@ if (storedOrder) {
     <div
       className={`p-6 ${
         currentSong
-          ? isPlayerMinimized
+          ? isCompact && isPlayerMinimized
             ? "pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-56"
             : "pb-[calc(22rem+env(safe-area-inset-bottom))] md:pb-56"
           : "pb-6"
