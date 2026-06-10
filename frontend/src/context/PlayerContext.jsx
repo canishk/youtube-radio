@@ -1,6 +1,8 @@
 import {
   createContext,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -17,6 +19,22 @@ export function PlayerProvider({
   const [queue, setQueue] = useState([]);
   const [playbackStatus, setPlaybackStatus] = useState("stopped");
   const [resumePosition, setResumePosition] = useState(0);
+  const [consecutiveSkips, setConsecutiveSkips] = useState(0);
+  const [pendingHandoff, setPendingHandoff] = useState(null);
+  const prevCategoryIdRef = useRef(undefined);
+
+  function clearPendingHandoff() {
+    setPendingHandoff(null);
+  }
+
+  useEffect(() => {
+    const categoryId = currentCategory?.id ?? null;
+    if (prevCategoryIdRef.current !== undefined && prevCategoryIdRef.current !== categoryId) {
+      setConsecutiveSkips(0);
+      setPendingHandoff(null);
+    }
+    prevCategoryIdRef.current = categoryId;
+  }, [currentCategory?.id]);
 
   const value = {
 
@@ -40,6 +58,13 @@ export function PlayerProvider({
 
     resumePosition,
     setResumePosition,
+
+    consecutiveSkips,
+    setConsecutiveSkips,
+
+    pendingHandoff,
+    setPendingHandoff,
+    clearPendingHandoff,
   };
 
   return (

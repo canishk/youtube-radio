@@ -26,6 +26,16 @@ export async function fetchNextSong(
 
   } catch (error) {
 
+    if (error.response?.status === 410) {
+      const detail = error.response.data?.detail;
+      return {
+        exhausted: true,
+        recommendedCategory: detail?.recommended_category ?? null,
+        sharedMoods: detail?.shared_moods ?? [],
+        currentCategoryId: detail?.current_category_id,
+      };
+    }
+
     console.error(
       "Failed to fetch next song",
       error
@@ -34,4 +44,3 @@ export async function fetchNextSong(
     return null;
   }
 }
-
