@@ -5,6 +5,7 @@ import api from "../services/api";
 import CategoryCard from "../components/CategoryCard";
 import RadioPlayer from "../components/RadioPlayer";
 import ResumeCard from "../components/ResumeCard";
+import CategoryHandoffCard from "../components/CategoryHandoffCard";
 import { usePlayer } from "../context/PlayerContext";
 import { fetchNextSong } from "../services/radioEngine";
 import { getCurrentSession, getListenerCount } from "../services/sessionApi";
@@ -34,7 +35,12 @@ function HomePage() {
 
     queue,
     setQueue,
-    setResumePosition: setPlayerResumePosition
+    setResumePosition: setPlayerResumePosition,
+
+    pendingHandoff,
+    setPendingHandoff,
+    clearPendingHandoff,
+    setPlaybackStatus,
 
   } = usePlayer();
 
@@ -247,6 +253,53 @@ if (storedOrder) {
     handleSelectCategory(resumeCategory);
   }
 
+  function showCategoryHandoff(result, category) {
+    setCurrentCategory(category);
+    setPendingHandoff({
+      recommendedCategory: result.recommendedCategory,
+      sharedMoods: result.sharedMoods,
+    });
+    setIsPlaying(false);
+    setPlaybackStatus("stopped");
+
+    trackEvent({
+      event: "category_exhausted",
+      category_id: category.id,
+      recommended_category_id: result.recommendedCategory?.id ?? null,
+      session_id: getSessionId(),
+    });
+  }
+
+  async function handleHandoffAccept() {
+    const recommendedCategory = pendingHandoff?.recommendedCategory;
+
+    trackEvent({
+      event: "category_handoff_accepted",
+      category_id: currentCategory?.id,
+      recommended_category_id: recommendedCategory?.id ?? null,
+      session_id: getSessionId(),
+    });
+
+    clearPendingHandoff();
+
+    if (recommendedCategory) {
+      await handleSelectCategory(recommendedCategory);
+    }
+  }
+
+  function handleHandoffCancel() {
+    trackEvent({
+      event: "category_handoff_cancelled",
+      category_id: currentCategory?.id,
+      recommended_category_id: pendingHandoff?.recommendedCategory?.id ?? null,
+      session_id: getSessionId(),
+    });
+
+    clearPendingHandoff();
+    setIsPlaying(false);
+    setPlaybackStatus("stopped");
+  }
+
   async function handleSelectCategory(
     category
   ) {
@@ -272,11 +325,17 @@ if (storedOrder) {
       setCurrentSong(null);
       setPlayerResumePosition(0);
       setIsResumeMode(false);
+      clearPendingHandoff();
 
       const song =
         await fetchNextSong(
           category.id
         );
+
+      if (song?.exhausted) {
+        showCategoryHandoff(song, category);
+        return;
+      }
 
       setCurrentCategory(
         category
@@ -306,6 +365,11 @@ if (storedOrder) {
           await fetchNextSong(
             category.id
           );
+
+        if (nextSong?.exhausted) {
+          showCategoryHandoff(nextSong, category);
+          break;
+        }
 
         if (nextSong) {
 
@@ -341,6 +405,16 @@ if (storedOrder) {
         <h1 className="text-3xl font-bold">U-Tube Radio</h1>
         <img src="/logo.png" alt="U-Tube Radio" className="h-10 w-10" />
       </div>
+
+      {pendingHandoff && currentCategory && (
+        <CategoryHandoffCard
+          currentCategoryName={currentCategory.name}
+          recommendedCategory={pendingHandoff.recommendedCategory}
+          sharedMoods={pendingHandoff.sharedMoods}
+          onAccept={handleHandoffAccept}
+          onCancel={handleHandoffCancel}
+        />
+      )}
 
       {showResumeCard &&
         resumeCategory && (

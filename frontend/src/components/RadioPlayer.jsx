@@ -4,6 +4,7 @@ import YouTube from "react-youtube";
 
 import { usePlayer } from "../context/PlayerContext";
 import { fetchNextSong } from "../services/radioEngine";
+import { HANDOFF_COUNTDOWN_SECONDS } from "./CategoryHandoffCard";
 import { updateCurrentSong, updatePlaybackPosition } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
 import { trackEvent } from "../services/analyticsApi";
@@ -39,6 +40,8 @@ function RadioPlayer() {
 
   consecutiveSkips,
   setConsecutiveSkips,
+
+  setPendingHandoff,
 
 } = usePlayer();
 
@@ -108,6 +111,25 @@ function RadioPlayer() {
   playerRef.current.setVolume(newVolume);
 }
 
+  function handleCategoryExhaustion(result) {
+    const categoryId = currentCategory?.id ?? currentCategory;
+    setQueue([]);
+    setPendingHandoff({
+      recommendedCategory: result.recommendedCategory,
+      sharedMoods: result.sharedMoods,
+      secondsLeft: HANDOFF_COUNTDOWN_SECONDS,
+    });
+    setIsPlaying(false);
+    setPlaybackStatus("stopped");
+
+    trackEvent({
+      event: "category_exhausted",
+      category_id: categoryId,
+      recommended_category_id: result.recommendedCategory?.id ?? null,
+      session_id: getSessionId(),
+    });
+  }
+
   async function advanceToNextSong() {
     const categoryId = currentCategory?.id ?? currentCategory;
     if (!categoryId || !currentSong) return null;
@@ -121,11 +143,20 @@ function RadioPlayer() {
       nextSong = await fetchNextSong(categoryId, currentSong.id);
     }
 
+    if (nextSong?.exhausted) {
+      handleCategoryExhaustion(nextSong);
+      return null;
+    }
+
     if (!nextSong) return null;
 
     setCurrentSong(nextSong);
 
     const additionalSong = await fetchNextSong(categoryId, currentSong.id);
+    if (additionalSong?.exhausted) {
+      handleCategoryExhaustion(additionalSong);
+      return nextSong;
+    }
     if (additionalSong) {
       setQueue((previous) => [...previous, additionalSong]);
     }
