@@ -35,9 +35,14 @@ function RadioPlayer() {
   setPlaybackStatus,
 
   resumePosition,
-  setResumePosition
+  setResumePosition,
+
+  consecutiveSkips,
+  setConsecutiveSkips,
 
 } = usePlayer();
+
+  const canSkip = consecutiveSkips < 2;
 
   function onReady(event) {
     if (resumePosition > 15) {
@@ -103,53 +108,68 @@ function RadioPlayer() {
   playerRef.current.setVolume(newVolume);
 }
 
+  async function advanceToNextSong() {
+    const categoryId = currentCategory?.id ?? currentCategory;
+    if (!categoryId || !currentSong) return null;
+
+    let nextSong = null;
+
+    if (queue.length > 0) {
+      nextSong = queue[0];
+      setQueue(queue.slice(1));
+    } else {
+      nextSong = await fetchNextSong(categoryId, currentSong.id);
+    }
+
+    if (!nextSong) return null;
+
+    setCurrentSong(nextSong);
+
+    const additionalSong = await fetchNextSong(categoryId, currentSong.id);
+    if (additionalSong) {
+      setQueue((previous) => [...previous, additionalSong]);
+    }
+
+    return nextSong;
+  }
+
   async function handleSongEnd() {
-    await updatePlaybackPosition(getSessionId(), currentSong.id, 0)
+    await updatePlaybackPosition(getSessionId(), currentSong.id, 0);
     setResumePosition(0);
+
     const categoryId = currentCategory?.id ?? currentCategory;
     if (!categoryId) return;
 
-    let nextSong = null;
-    
     await trackEvent({
       event: "song_complete",
       song_id: currentSong.id,
-      category_id: categoryId
+      category_id: categoryId,
+      session_id: getSessionId(),
     });
 
-    if (queue.length > 0) {
+    setConsecutiveSkips(0);
+    await advanceToNextSong();
+  }
 
-        nextSong = queue[0];
+  async function handleSkip() {
+    if (!canSkip || !currentSong || !currentCategory) return;
 
-        setQueue(
-        queue.slice(1)
-        );
+    const categoryId = currentCategory?.id ?? currentCategory;
 
-    } else {
+    await trackEvent({
+      event: "song_skip",
+      song_id: currentSong.id,
+      category_id: categoryId,
+    });
 
-        nextSong = await fetchNextSong(categoryId,song_id);
-        console.log(nextSong.id);
-    }
+    setConsecutiveSkips((previous) => previous + 1);
+    await updatePlaybackPosition(getSessionId(), currentSong.id, 0);
+    setResumePosition(0);
+    trackedSongRef.current = null;
+    await advanceToNextSong();
+  }
 
-    if (!nextSong) return;
-    console.log("Song Ended", currentSong.title);
-    console.log("Next Song", nextSong.title);
-    setCurrentSong(nextSong);
-    const additionalSong =
-        await fetchNextSong(
-        categoryId, currentSong.id
-        );
-
-    if (additionalSong) {
-
-        setQueue((previous) => [
-        ...previous,
-        additionalSong
-        ]);
-    }
-}
-
-async function handlePlayerError(
+  async function handlePlayerError(
       event
     ) {
 
@@ -204,7 +224,7 @@ async function handlePlayerError(
         await trackEvent({
           event: "song_play",
           song_id: song.id,
-          category_id: song.category_id
+          category_id: song.category_id,
         });
 
       } catch (error) {
@@ -425,6 +445,24 @@ async function handlePlayerError(
               Play
             </button>
           )}
+
+          <button
+            onClick={handleSkip}
+            disabled={!currentSong}
+            aria-hidden={!canSkip}
+            tabIndex={canSkip ? 0 : -1}
+            title="Skip to next song"
+            className={`
+              bg-slate-600
+              hover:bg-slate-500
+              px-4
+              py-2
+              rounded-lg
+              ${canSkip ? "" : "invisible pointer-events-none"}
+            `}
+          >
+            Skip
+          </button>
 
           <button
             onClick={handleStop}

@@ -13,6 +13,7 @@ class AnalyticsEventRequest(BaseModel):
     event: str
     song_id: int | None = None
     category_id: str | None = None
+    session_id: str | None = None
 
 @router.post("/event")
 def anaylitcs_event(
@@ -26,8 +27,10 @@ def anaylitcs_event(
     elif payload.event == "song_resume":
         track_song_resume(db, payload.song_id)
     elif payload.event == "song_complete":
-        track_song_completion(db, payload.song_id, payload.category_id)
-    
+        track_song_completion(db, payload.song_id, payload.category_id, payload.session_id)
+    elif payload.event == "song_skip":
+        pass
+
     return {
         "success": True
     }

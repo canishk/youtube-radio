@@ -11,6 +11,7 @@ from app.models.category import Category
 from app.models.song import Song
 from app.models.playback_history import PlaybackHistory
 from app.models.session import Session
+from app.models.session_song_history import SessionSongHistory
 from app.models.video_health import VideoHealth
 
 from app.db.session import SessionLocal

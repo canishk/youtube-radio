@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 from app.models.song_statistics import SongStatistics
 from app.models.category_statistics import CategoryStatistics
 from app.models.song import Song
+from app.services.discovery_service import record_song_play
 
 def get_or_create_song_stats(db, song_id:int):
     stats = db.query(SongStatistics).filter(SongStatistics.song_id == song_id).first()
@@ -28,6 +29,8 @@ def track_song_play(db, song_id: int):
     song_stats.last_played_at = datetime.utcnow()
     db.commit()
 
+
+
 def track_category_entry(db, category_id: str):
     category_stats = get_or_create_category_stats(db, category_id)
     category_stats.entry_count +=1
@@ -35,7 +38,7 @@ def track_category_entry(db, category_id: str):
     db.commit()
 
 
-def track_song_completion(db, song_id: int, category_id: str):
+def track_song_completion(db, song_id: int, category_id: str, session_id: str | None = None):
     if not category_id:
         song = db.query(Song).filter(Song.id == song_id).first()
         if not song:
@@ -47,6 +50,9 @@ def track_song_completion(db, song_id: int, category_id: str):
 
     category_stats = get_or_create_category_stats(db, category_id)
     category_stats.completion_count +=1
+
+    if session_id:
+        record_song_play(db, session_id, song_id, category_id)
 
     db.commit()
 

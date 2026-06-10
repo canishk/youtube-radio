@@ -4,31 +4,18 @@ import {
   Route
 } from "react-router-dom";
 
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { getPublicConfig } from "./services/configApi";
 
 import HomePage from "./pages/HomePage";
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
-import AdminLoginPage
-from "./pages/admin/AdminLoginPage";
-
-import AdminDashboard
-from "./pages/admin/AdminDashboard";
-
-import CategoriesPage
-from "./pages/admin/CategoriesPage";
-
-import SongsPage
-from "./pages/admin/SongsPage";
-
-import VideoHealthPage
-from "./pages/admin/VideoHealthPage";
-
-import AdminLayout
-from "./layouts/AdminLayout";
-
-import AdminProtectedRoute
-from "./components/AdminProtectedRoute";
+const AdminLoginPage = lazy(() => import("./pages/admin/AdminLoginPage"));
+const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const CategoriesPage = lazy(() => import("./pages/admin/CategoriesPage"));
+const SongsPage = lazy(() => import("./pages/admin/SongsPage"));
+const VideoHealthPage = lazy(() => import("./pages/admin/VideoHealthPage"));
 
 function App() {
 
@@ -97,6 +84,13 @@ function App() {
 
     <BrowserRouter>
 
+      <Suspense
+        fallback={
+          <div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-100">
+            Loading…
+          </div>
+        }
+      >
       <Routes>
 
         <Route
@@ -150,6 +144,7 @@ function App() {
         </Route>
 
       </Routes>
+      </Suspense>
 
     </BrowserRouter>
 
