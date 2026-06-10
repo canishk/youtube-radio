@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.models.playback_history import PlaybackHistory
+from app.models.session_song_history import SessionSongHistory
 
 def log_playback(
         db,
@@ -42,3 +43,15 @@ def get_session_played_video_ids(db, session_id, category_id) -> set[str]:
         .all()
     )
     return {row[0] for row in rows}
+
+
+def clear_category_play_history(db, session_id: str, category_id: str) -> None:
+    db.query(PlaybackHistory).filter(
+        PlaybackHistory.session_id == session_id,
+        PlaybackHistory.category_id == category_id,
+    ).delete()
+    db.query(SessionSongHistory).filter(
+        SessionSongHistory.session_id == session_id,
+        SessionSongHistory.category_id == category_id,
+    ).delete()
+    db.commit()

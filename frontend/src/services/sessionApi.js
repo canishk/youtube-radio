@@ -59,6 +59,21 @@ export async function updateCurrentSong(
   return response.data;
 }
 
+export async function resetCategoryHistory(
+  sessionId,
+  categoryId
+) {
+  const response = await api.post(
+    "/session/category-history/reset",
+    {
+      session_id: sessionId,
+      category_id: categoryId,
+    }
+  );
+
+  return response.data;
+}
+
 export async function getListenerCount() {
 
   const response =

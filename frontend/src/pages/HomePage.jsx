@@ -8,7 +8,7 @@ import ResumeCard from "../components/ResumeCard";
 import CategoryHandoffCard from "../components/CategoryHandoffCard";
 import { usePlayer } from "../context/PlayerContext";
 import { fetchNextSong } from "../services/radioEngine";
-import { getCurrentSession, getListenerCount } from "../services/sessionApi";
+import { getCurrentSession, getListenerCount, resetCategoryHistory } from "../services/sessionApi";
 import { getSessionId } from "../services/sessionService";
 import { shuffleArray } from "../utils/shuffleArray";
 import { trackEvent } from "../services/analyticsApi";
@@ -56,6 +56,12 @@ function HomePage() {
     }
 
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (pendingHandoff) {
+      setShowResumeCard(false);
+    }
+  }, [pendingHandoff]);
 
   const canResumeSong = useMemo(() => {
 
@@ -227,9 +233,10 @@ if (storedOrder) {
       const preloadSongs = [];
       for (let i = 0; i < 3; i++) {
         const nextSong = await fetchNextSong(resumeCategory.id);
-        if (nextSong) {
-          preloadSongs.push(nextSong);
+        if (nextSong?.exhausted || !nextSong) {
+          break;
         }
+        preloadSongs.push(nextSong);
       }
 
       setQueue(preloadSongs);
@@ -255,6 +262,7 @@ if (storedOrder) {
 
   function showCategoryHandoff(result, category) {
     setCurrentCategory(category);
+    setShowResumeCard(false);
     setPendingHandoff({
       recommendedCategory: result.recommendedCategory,
       sharedMoods: result.sharedMoods,
@@ -287,114 +295,104 @@ if (storedOrder) {
     }
   }
 
-  function handleHandoffCancel() {
-    trackEvent({
-      event: "category_handoff_cancelled",
-      category_id: currentCategory?.id,
-      recommended_category_id: pendingHandoff?.recommendedCategory?.id ?? null,
-      session_id: getSessionId(),
-    });
-
-    clearPendingHandoff();
-    setIsPlaying(false);
-    setPlaybackStatus("stopped");
-  }
-
-  async function handleSelectCategory(
-    category
-  ) {
-
-    if (!category?.id) {
-
-      console.error(
-        "Missing category id",
-        category
-      );
-
+  async function handleHandoffStay() {
+    if (!currentCategory?.id) {
       return;
     }
 
-    await trackEvent({
-      event:'category_entered',
-      category_id: category.id
-    })
+    const category = currentCategory;
+    const recommendedCategoryId =
+      pendingHandoff?.recommendedCategory?.id ?? null;
+
+    clearPendingHandoff();
+    setShowResumeCard(false);
+    setQueue([]);
+
+    trackEvent({
+      event: "category_handoff_stayed",
+      category_id: category.id,
+      recommended_category_id: recommendedCategoryId,
+      session_id: getSessionId(),
+    });
 
     try {
+      await resetCategoryHistory(getSessionId(), category.id);
+    } catch (error) {
+      console.error("Failed to reset category history", error);
+      return;
+    }
 
+    await restartCategoryPlayback(category);
+  }
+
+  async function restartCategoryPlayback(category) {
+    if (!category?.id) {
+      return;
+    }
+
+    try {
       setLoading(true);
-      setCurrentSong(null);
       setPlayerResumePosition(0);
-      setIsResumeMode(false);
-      clearPendingHandoff();
 
-      const song =
-        await fetchNextSong(
-          category.id
-        );
+      const song = await fetchNextSong(category.id);
 
       if (song?.exhausted) {
         showCategoryHandoff(song, category);
         return;
       }
 
-      setCurrentCategory(
-        category
-      );
-
-      setCurrentSong(
-        song
-      );
-
-      setIsPlaying(
-        true
-      );
-
-      setShowResumeCard(
-        false
-      );
-
-      const preloadSongs = [];
-
-      for (
-        let i = 0;
-        i < 3;
-        i++
-      ) {
-
-        const nextSong =
-          await fetchNextSong(
-            category.id
-          );
-
-        if (nextSong?.exhausted) {
-          showCategoryHandoff(nextSong, category);
-          break;
-        }
-
-        if (nextSong) {
-
-          preloadSongs.push(
-            nextSong
-          );
-        }
+      if (!song) {
+        console.error("No song returned after category reset");
+        return;
       }
 
-      setQueue(
-        preloadSongs
-      );
+      setCurrentCategory(category);
+      setCurrentSong(song);
+      setIsPlaying(true);
+      setPlaybackStatus("playing");
+      setShowResumeCard(false);
 
+      const preloadSongs = [];
+      for (let i = 0; i < 3; i++) {
+        const nextSong = await fetchNextSong(category.id);
+        if (nextSong?.exhausted || !nextSong) {
+          break;
+        }
+        preloadSongs.push(nextSong);
+      }
+
+      setQueue(preloadSongs);
     } catch (error) {
-
-      console.error(
-        error
-      );
-
+      console.error(error);
     } finally {
-
-      setLoading(
-        false
-      );
+      setLoading(false);
     }
+  }
+
+  async function handleSelectCategory(category) {
+    if (!category?.id) {
+      console.error("Missing category id", category);
+      return;
+    }
+
+    await trackEvent({
+      event: "category_entered",
+      category_id: category.id,
+    });
+
+    clearPendingHandoff();
+    setIsResumeMode(false);
+    setShowResumeCard(false);
+    setCurrentSong(null);
+
+    try {
+      await resetCategoryHistory(getSessionId(), category.id);
+    } catch (error) {
+      console.error("Failed to reset category history", error);
+      return;
+    }
+
+    await restartCategoryPlayback(category);
   }
 
   return (
@@ -412,11 +410,12 @@ if (storedOrder) {
           recommendedCategory={pendingHandoff.recommendedCategory}
           sharedMoods={pendingHandoff.sharedMoods}
           onAccept={handleHandoffAccept}
-          onCancel={handleHandoffCancel}
+          onStay={handleHandoffStay}
         />
       )}
 
       {showResumeCard &&
+        !pendingHandoff &&
         resumeCategory && (
 
         <ResumeCard

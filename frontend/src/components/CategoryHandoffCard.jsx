@@ -7,20 +7,30 @@ function CategoryHandoffCard({
   recommendedCategory,
   sharedMoods,
   onAccept,
-  onCancel,
+  onStay,
 }) {
   const [secondsLeft, setSecondsLeft] = useState(HANDOFF_COUNTDOWN_SECONDS);
   const onAcceptRef = useRef(onAccept);
-  const acceptedRef = useRef(false);
+  const onStayRef = useRef(onStay);
+  const actionTakenRef = useRef(false);
 
   onAcceptRef.current = onAccept;
+  onStayRef.current = onStay;
 
   function handleAccept() {
-    if (acceptedRef.current) {
+    if (actionTakenRef.current) {
       return;
     }
-    acceptedRef.current = true;
+    actionTakenRef.current = true;
     onAcceptRef.current();
+  }
+
+  function handleStay() {
+    if (actionTakenRef.current) {
+      return;
+    }
+    actionTakenRef.current = true;
+    onStayRef.current();
   }
 
   useEffect(() => {
@@ -103,16 +113,17 @@ function CategoryHandoffCard({
         )}
 
         <button
-          onClick={onCancel}
-          className="
-            bg-slate-700
-            hover:bg-slate-600
+          onClick={handleStay}
+          className={`
             px-4
             py-2
             rounded-lg
-          "
+            ${recommendedCategory
+              ? "bg-slate-700 hover:bg-slate-600"
+              : "bg-red-600 hover:bg-red-700"}
+          `}
         >
-          {recommendedCategory ? "Stay here" : "Dismiss"}
+          {recommendedCategory ? "Stay here" : "Listen again"}
         </button>
       </div>
     </div>

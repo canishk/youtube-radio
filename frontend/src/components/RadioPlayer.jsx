@@ -152,12 +152,8 @@ function RadioPlayer() {
 
     setCurrentSong(nextSong);
 
-    const additionalSong = await fetchNextSong(categoryId, currentSong.id);
-    if (additionalSong?.exhausted) {
-      handleCategoryExhaustion(additionalSong);
-      return nextSong;
-    }
-    if (additionalSong) {
+    const additionalSong = await fetchNextSong(categoryId, nextSong.id);
+    if (additionalSong && !additionalSong.exhausted) {
       setQueue((previous) => [...previous, additionalSong]);
     }
 
