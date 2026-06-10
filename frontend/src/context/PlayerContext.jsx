@@ -21,10 +21,15 @@ export function PlayerProvider({
   const [resumePosition, setResumePosition] = useState(0);
   const [consecutiveSkips, setConsecutiveSkips] = useState(0);
   const [pendingHandoff, setPendingHandoff] = useState(null);
+  const [isPlayerMinimized, setIsPlayerMinimized] = useState(false);
   const prevCategoryIdRef = useRef(undefined);
 
   function clearPendingHandoff() {
     setPendingHandoff(null);
+  }
+
+  function togglePlayerMinimized() {
+    setIsPlayerMinimized((previous) => !previous);
   }
 
   useEffect(() => {
@@ -65,6 +70,10 @@ export function PlayerProvider({
     pendingHandoff,
     setPendingHandoff,
     clearPendingHandoff,
+
+    isPlayerMinimized,
+    setIsPlayerMinimized,
+    togglePlayerMinimized,
   };
 
   return (

@@ -42,6 +42,8 @@ function HomePage() {
     clearPendingHandoff,
     setPlaybackStatus,
 
+    isPlayerMinimized,
+
   } = usePlayer();
 
   useEffect(() => {
@@ -397,12 +399,25 @@ if (storedOrder) {
 
   return (
 
-    <div className="p-6 pb-52">
+    <div
+      className={`p-6 ${
+        currentSong
+          ? isPlayerMinimized
+            ? "pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-56"
+            : "pb-[calc(22rem+env(safe-area-inset-bottom))] md:pb-56"
+          : "pb-6"
+      }`}
+    >
 
-      <div className="flex items-center gap-3">
-        <h1 className="text-3xl font-bold">U-Tube Radio</h1>
-        <img src="/logo.png" alt="U-Tube Radio" className="h-10 w-10" />
-      </div>
+      <header className="mb-6 text-center">
+        <div className="flex items-center justify-center gap-3">
+          <h1 className="text-3xl font-bold">U-Tube Radio</h1>
+          <img src="/logo.png" alt="U-Tube Radio" className="h-10 w-10" />
+        </div>
+        <p className="mt-2 text-sm text-slate-400">
+          {listenerCount} listening
+        </p>
+      </header>
 
       {pendingHandoff && currentCategory && (
         <CategoryHandoffCard
@@ -471,7 +486,6 @@ if (storedOrder) {
           />
         ))}
       </div>
-      <div className="text-sm text-slate-400 mb-4">{listenerCount} 🎧 </div>
       {currentSong && (
         <RadioPlayer />
       )}

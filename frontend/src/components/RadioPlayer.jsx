@@ -43,9 +43,21 @@ function RadioPlayer() {
 
   setPendingHandoff,
 
+  isPlayerMinimized,
+  setIsPlayerMinimized,
+
 } = usePlayer();
 
   const canSkip = consecutiveSkips < 2;
+
+  useEffect(() => {
+    if (!currentSong) {
+      return;
+    }
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      setIsPlayerMinimized(true);
+    }
+  }, [currentSong?.id, setIsPlayerMinimized]);
 
   function onReady(event) {
     if (resumePosition > 15) {
@@ -375,6 +387,10 @@ function RadioPlayer() {
     },
   };
 
+  const playPauseButtonClass = isPlaying
+    ? "bg-yellow-500 hover:bg-yellow-600"
+    : "bg-green-600 hover:bg-green-700";
+
   return (
     <div
       className="
@@ -386,19 +402,69 @@ function RadioPlayer() {
         border-t
         border-slate-800
         p-4
+        pb-[max(1rem,env(safe-area-inset-bottom))]
       "
     >
 
+      {isPlayerMinimized && (
+        <div className="flex md:hidden items-center gap-3">
+          {currentSong?.thumbnail && (
+            <img
+              src={currentSong.thumbnail}
+              alt={currentSong.title}
+              className="w-12 h-12 rounded-lg object-cover shrink-0"
+            />
+          )}
+
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold truncate">
+              {currentSong?.title}
+            </h3>
+            <span className="inline-block mt-1 bg-red-600 px-2 py-0.5 rounded-full text-xs truncate max-w-full">
+              {currentCategory?.name}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={isPlaying ? handlePause : handleResume}
+            className={`shrink-0 px-3 py-2 rounded-lg text-sm ${playPauseButtonClass}`}
+          >
+            {isPlaying ? "Pause" : "Play"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsPlayerMinimized(false)}
+            className="shrink-0 p-2 text-slate-400 hover:text-white"
+            aria-label="Expand player"
+          >
+            ▲
+          </button>
+        </div>
+      )}
+
       <div
-        className="
-          flex
+        className={`
           flex-col
           gap-4
           md:flex-row
           md:items-center
           md:justify-between
-        "
+          ${isPlayerMinimized ? "hidden md:flex" : "flex"}
+        `}
       >
+
+        <div className="flex md:hidden justify-end">
+          <button
+            type="button"
+            onClick={() => setIsPlayerMinimized(true)}
+            className="p-2 text-slate-400 hover:text-white"
+            aria-label="Minimize player"
+          >
+            ▼
+          </button>
+        </div>
 
         <div className="flex flex-wrap items-center gap-2">
 
@@ -438,7 +504,6 @@ function RadioPlayer() {
             >
               {currentCategory?.name}
             </span>
-            {/* <p className="text-xs text-slate-500 mt-2">Status: {playbackStatus}</p> */}
           </div>
 
         </div>
