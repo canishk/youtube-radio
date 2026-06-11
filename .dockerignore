@@ -1,0 +1,17 @@
+.git
+.github
+
+frontend/node_modules
+frontend/dist
+
+backend/__pycache__
+backend/*.db
+backend/.venv
+
+*.pyc
+
+.env
+.env.*
+
+.vscode
+.idea

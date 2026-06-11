@@ -1,0 +1,15 @@
+services:
+  u-tube-radio:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:80"
+    env_file:
+      - backend/.env
+    volumes:
+      - u-tube-radio-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  u-tube-radio-data:
