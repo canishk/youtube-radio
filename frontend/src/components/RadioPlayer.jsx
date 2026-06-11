@@ -1,8 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 
 import YouTube from "react-youtube";
 
 import { usePlayer } from "../context/PlayerContext";
+import { useIsCompactPlayer } from "../hooks/useIsCompactPlayer";
+import { useMediaSession } from "../hooks/useMediaSession";
 import { fetchNextSong } from "../services/radioEngine";
 import { HANDOFF_COUNTDOWN_SECONDS } from "./CategoryHandoffCard";
 import { updateCurrentSong, updatePlaybackPosition } from "../services/sessionApi";
@@ -43,9 +45,20 @@ function RadioPlayer() {
 
   setPendingHandoff,
 
+  isPlayerMinimized,
+  setIsPlayerMinimized,
+
 } = usePlayer();
 
   const canSkip = consecutiveSkips < 2;
+  const isCompact = useIsCompactPlayer();
+
+  useEffect(() => {
+    if (!currentSong || !isCompact) {
+      return;
+    }
+    setIsPlayerMinimized(true);
+  }, [currentSong?.id, isCompact, setIsPlayerMinimized]);
 
   function onReady(event) {
     if (resumePosition > 15) {
@@ -59,6 +72,26 @@ function RadioPlayer() {
     playerRef.current = event.target;
     event.target.setVolume(volume);
     setPlaybackStatus("playing");
+    setIsPlaying(true);
+  }
+
+  function onStateChange(event) {
+    const YT = window.YT;
+    if (!YT) {
+      return;
+    }
+
+    const state = event.data;
+
+    if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) {
+      setIsPlaying(true);
+    } else if (
+      state === YT.PlayerState.PAUSED ||
+      state === YT.PlayerState.ENDED ||
+      state === YT.PlayerState.UNSTARTED
+    ) {
+      setIsPlaying(false);
+    }
   }
 
   async function handlePause() {
@@ -263,37 +296,6 @@ function RadioPlayer() {
       }
     }
 
-    async function savePlaybackPosition() {
-
-      if (
-        !playerRef.current ||
-        !currentSong
-      ) {
-        return;
-      }
-
-      try {
-
-        const currentTime =
-          Math.floor(
-            playerRef.current
-              .getCurrentTime()
-          );
-
-        await updatePlaybackPosition(
-          getSessionId(),
-          currentSong.id,
-          currentTime
-        );
-
-      } catch (error) {
-
-        console.error(
-          "Failed to save playback position",
-          error
-        );
-      }
-    }
   async function sendListenerHeartbeat() {
     if (!currentSong || !currentCategory) {
       return;
@@ -308,6 +310,89 @@ function RadioPlayer() {
     const interval = setInterval(sendListenerHeartbeat, 30000);
     return () => clearInterval(interval);
   },[isPlaying, currentSong]);
+
+  const savePlaybackPosition = useCallback(async () => {
+    if (!playerRef.current || !currentSong) {
+      return;
+    }
+
+    try {
+      const currentTime = Math.floor(playerRef.current.getCurrentTime());
+      await updatePlaybackPosition(
+        getSessionId(),
+        currentSong.id,
+        currentTime
+      );
+    } catch (error) {
+      console.error("Failed to save playback position", error);
+    }
+  }, [currentSong]);
+
+  useMediaSession({
+    currentSong,
+    currentCategory,
+    isPlaying,
+    playbackStatus,
+    canSkip,
+    onPlay: handleResume,
+    onPause: handlePause,
+    onSkip: handleSkip,
+  });
+
+  useEffect(() => {
+    const timeoutIds = [];
+
+    function attemptResume(delayMs) {
+      const timeoutId = setTimeout(() => {
+        const YT = window.YT;
+        if (!YT || !playerRef.current) {
+          return;
+        }
+
+        const state = playerRef.current.getPlayerState();
+        if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
+          playerRef.current.playVideo();
+          setIsPlaying(true);
+        }
+      }, delayMs);
+      timeoutIds.push(timeoutId);
+    }
+
+    function resumePlaybackIfNeeded() {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+      if (playbackStatus !== "playing" || !playerRef.current || !currentSong) {
+        return;
+      }
+
+      attemptResume(0);
+      attemptResume(150);
+      attemptResume(500);
+    }
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        savePlaybackPosition();
+        return;
+      }
+      resumePlaybackIfNeeded();
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("resume", resumePlaybackIfNeeded);
+    window.addEventListener("pageshow", resumePlaybackIfNeeded);
+    window.addEventListener("focus", resumePlaybackIfNeeded);
+
+    return () => {
+      timeoutIds.forEach(clearTimeout);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("resume", resumePlaybackIfNeeded);
+      window.removeEventListener("pageshow", resumePlaybackIfNeeded);
+      window.removeEventListener("focus", resumePlaybackIfNeeded);
+    };
+  }, [playbackStatus, currentSong?.id, savePlaybackPosition]);
+
   useEffect(() => {
     if (currentSong && currentCategory) {
       trackSongStart(currentSong);
@@ -371,9 +456,14 @@ function RadioPlayer() {
     playerVars: {
       autoplay: 1,
       enablejsapi: 1,
+      playsinline: 1,
       origin: window.location.origin
     },
   };
+
+  const playPauseButtonClass = isPlaying
+    ? "bg-yellow-500 hover:bg-yellow-600"
+    : "bg-green-600 hover:bg-green-700";
 
   return (
     <div
@@ -386,9 +476,49 @@ function RadioPlayer() {
         border-t
         border-slate-800
         p-4
+        pb-[max(1rem,env(safe-area-inset-bottom))]
       "
     >
 
+      {isCompact && isPlayerMinimized && (
+        <div className="flex items-center gap-3">
+          {currentSong?.thumbnail && (
+            <img
+              src={currentSong.thumbnail}
+              alt={currentSong.title}
+              className="w-12 h-12 rounded-lg object-cover shrink-0"
+            />
+          )}
+
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold truncate">
+              {currentSong?.title}
+            </h3>
+            <span className="inline-block mt-1 bg-red-600 px-2 py-0.5 rounded-full text-xs truncate max-w-full">
+              {currentCategory?.name}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={isPlaying ? handlePause : handleResume}
+            className={`shrink-0 px-3 py-2 rounded-lg text-sm ${playPauseButtonClass}`}
+          >
+            {isPlaying ? "Pause" : "Play"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsPlayerMinimized(false)}
+            className="shrink-0 p-2 text-slate-400 hover:text-white"
+            aria-label="Expand player"
+          >
+            ▲
+          </button>
+        </div>
+      )}
+
+      {(!isCompact || !isPlayerMinimized) && (
       <div
         className="
           flex
@@ -399,6 +529,19 @@ function RadioPlayer() {
           md:justify-between
         "
       >
+
+        {isCompact && (
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setIsPlayerMinimized(true)}
+              className="p-2 text-slate-400 hover:text-white"
+              aria-label="Minimize player"
+            >
+              ▼
+            </button>
+          </div>
+        )}
 
         <div className="flex flex-wrap items-center gap-2">
 
@@ -438,7 +581,6 @@ function RadioPlayer() {
             >
               {currentCategory?.name}
             </span>
-            {/* <p className="text-xs text-slate-500 mt-2">Status: {playbackStatus}</p> */}
           </div>
 
         </div>
@@ -522,6 +664,7 @@ function RadioPlayer() {
 
         </div>
       </div>
+      )}
 
       {currentSong && (
         <YouTube
@@ -530,6 +673,7 @@ function RadioPlayer() {
           opts={opts}
           iframeClassName="youtube-player"
           onReady={onReady}
+          onStateChange={onStateChange}
           onEnd={handleSongEnd}
           onError={handlePlayerError}
         />
