@@ -22,7 +22,7 @@ function CategoryForm({
       id,
       name,
       description,
-      thumbnail: "",
+      thumbnail: initialData?.thumbnail || "",
       auto_mode: "time-aware",
       enabled
     });
