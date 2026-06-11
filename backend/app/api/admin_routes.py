@@ -14,6 +14,7 @@ from app.services.groq_metadata_service import generate_ai_suggestions
 from app.services.dashboard_service import get_dashboard_data, get_metadata_gaps
 
 from app.utils.youtube import extract_video_id
+from app.services.category_thumbnail_service import assign_random_category_thumbnail
 
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -153,6 +154,32 @@ def toggle_category(
     db.refresh(category)
 
     return category
+
+
+@router.post("/categories/{category_id}/refresh-thumbnail")
+def refresh_category_thumbnail(
+    category_id: str,
+    db: Session = Depends(get_db),
+):
+    category = (
+        db.query(Category)
+        .filter(Category.id == category_id)
+        .first()
+    )
+
+    if not category:
+        raise HTTPException(
+            status_code=404,
+            detail="Category not found",
+        )
+
+    category.thumbnail = None
+    assign_random_category_thumbnail(db, category)
+    db.commit()
+    db.refresh(category)
+
+    return category
+
 
 @router.get("/songs")
 def get_songs(

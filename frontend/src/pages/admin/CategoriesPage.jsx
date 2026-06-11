@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 
-import {getCategories, createCategory, updateCategory, deleteCategory, toggleCategory} from "../../services/adminApi";
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  toggleCategory,
+  refreshCategoryThumbnail,
+} from "../../services/adminApi";
 
 import CategoryForm from "../../components/admin/CategoryForm";
 
@@ -44,6 +51,16 @@ function CategoriesPage() {
     await loadCategories();
   }
 
+  async function handleRefreshThumbnail(categoryId) {
+    const updated = await refreshCategoryThumbnail(categoryId);
+
+    if (!updated?.thumbnail) {
+      window.alert("No playable songs found to assign a thumbnail.");
+    }
+
+    await loadCategories();
+  }
+
   return (
     <div className="p-6">
       {showForm && (
@@ -69,8 +86,10 @@ function CategoriesPage() {
             ${category.enabled ? "bg-slate-900" : "bg-slate-600 opacity-40"}
           `}
         >
-          <h3>{category.name}</h3>
-          <div className="mt-1 mb-2">
+          <div className="flex items-start gap-4">
+            <div className="min-w-0 flex-1">
+              <h3>{category.name}</h3>
+              <div className="mt-1 mb-2">
 
             <span className={
                 category.enabled
@@ -84,41 +103,62 @@ function CategoriesPage() {
                   : "Disabled"
               }
             </span>
-          </div>
-          <p>{category.description}</p>
-          <div className="flex gap-3 mt-3">
-            <button
-              onClick={() => setEditingCategory(category)}
-              className="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() =>
-                handleToggle(
-                  category.id
-                )
-              }
-              className={
-                category.enabled
-                  ? "bg-yellow-600 px-3 py-1 rounded hover:bg-yellow-700"
-                  : "bg-green-600 px-3 py-1 rounded hover:bg-green-700"
-              }
-            >
+              </div>
+              <p>{category.description}</p>
+              <div className="flex flex-wrap gap-3 mt-3">
+                <button
+                  onClick={() => setEditingCategory(category)}
+                  className="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleRefreshThumbnail(category.id)}
+                  className="bg-purple-600 px-3 py-1 rounded hover:bg-purple-700"
+                >
+                  Refresh thumbnail
+                </button>
+                <button
+                  onClick={() =>
+                    handleToggle(
+                      category.id
+                    )
+                  }
+                  className={
+                    category.enabled
+                      ? "bg-yellow-600 px-3 py-1 rounded hover:bg-yellow-700"
+                      : "bg-green-600 px-3 py-1 rounded hover:bg-green-700"
+                  }
+                >
 
-              {
-                category.enabled
-                  ? "Disable"
-                  : "Enable"
-              }
+                  {
+                    category.enabled
+                      ? "Disable"
+                      : "Enable"
+                  }
 
-            </button>
-            <button
-              onClick={() => handleDelete(category.id)}
-              className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
-            >
-              Delete
-            </button>
+                </button>
+                <button
+                  onClick={() => handleDelete(category.id)}
+                  className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+
+            {category.thumbnail ? (
+              <img
+                src={category.thumbnail}
+                alt=""
+                className="w-16 h-16 shrink-0 rounded-lg object-cover"
+              />
+            ) : (
+              <div
+                className="h-16 w-16 shrink-0 rounded-lg bg-slate-800"
+                aria-hidden
+              />
+            )}
           </div>
         </div>
       ))}

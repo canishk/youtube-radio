@@ -61,6 +61,14 @@ export async function toggleCategory(
   return response.data;
 }
 
+export async function refreshCategoryThumbnail(categoryId) {
+  const response = await api.post(
+    `/admin/categories/${categoryId}/refresh-thumbnail`
+  );
+
+  return response.data;
+}
+
 export async function getSongs() {
 
   const response =
