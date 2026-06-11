@@ -1,9 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 
 import YouTube from "react-youtube";
 
 import { usePlayer } from "../context/PlayerContext";
 import { useIsCompactPlayer } from "../hooks/useIsCompactPlayer";
+import { useMediaSession } from "../hooks/useMediaSession";
 import { fetchNextSong } from "../services/radioEngine";
 import { HANDOFF_COUNTDOWN_SECONDS } from "./CategoryHandoffCard";
 import { updateCurrentSong, updatePlaybackPosition } from "../services/sessionApi";
@@ -71,6 +72,26 @@ function RadioPlayer() {
     playerRef.current = event.target;
     event.target.setVolume(volume);
     setPlaybackStatus("playing");
+    setIsPlaying(true);
+  }
+
+  function onStateChange(event) {
+    const YT = window.YT;
+    if (!YT) {
+      return;
+    }
+
+    const state = event.data;
+
+    if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) {
+      setIsPlaying(true);
+    } else if (
+      state === YT.PlayerState.PAUSED ||
+      state === YT.PlayerState.ENDED ||
+      state === YT.PlayerState.UNSTARTED
+    ) {
+      setIsPlaying(false);
+    }
   }
 
   async function handlePause() {
@@ -275,37 +296,6 @@ function RadioPlayer() {
       }
     }
 
-    async function savePlaybackPosition() {
-
-      if (
-        !playerRef.current ||
-        !currentSong
-      ) {
-        return;
-      }
-
-      try {
-
-        const currentTime =
-          Math.floor(
-            playerRef.current
-              .getCurrentTime()
-          );
-
-        await updatePlaybackPosition(
-          getSessionId(),
-          currentSong.id,
-          currentTime
-        );
-
-      } catch (error) {
-
-        console.error(
-          "Failed to save playback position",
-          error
-        );
-      }
-    }
   async function sendListenerHeartbeat() {
     if (!currentSong || !currentCategory) {
       return;
@@ -320,6 +310,89 @@ function RadioPlayer() {
     const interval = setInterval(sendListenerHeartbeat, 30000);
     return () => clearInterval(interval);
   },[isPlaying, currentSong]);
+
+  const savePlaybackPosition = useCallback(async () => {
+    if (!playerRef.current || !currentSong) {
+      return;
+    }
+
+    try {
+      const currentTime = Math.floor(playerRef.current.getCurrentTime());
+      await updatePlaybackPosition(
+        getSessionId(),
+        currentSong.id,
+        currentTime
+      );
+    } catch (error) {
+      console.error("Failed to save playback position", error);
+    }
+  }, [currentSong]);
+
+  useMediaSession({
+    currentSong,
+    currentCategory,
+    isPlaying,
+    playbackStatus,
+    canSkip,
+    onPlay: handleResume,
+    onPause: handlePause,
+    onSkip: handleSkip,
+  });
+
+  useEffect(() => {
+    const timeoutIds = [];
+
+    function attemptResume(delayMs) {
+      const timeoutId = setTimeout(() => {
+        const YT = window.YT;
+        if (!YT || !playerRef.current) {
+          return;
+        }
+
+        const state = playerRef.current.getPlayerState();
+        if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
+          playerRef.current.playVideo();
+          setIsPlaying(true);
+        }
+      }, delayMs);
+      timeoutIds.push(timeoutId);
+    }
+
+    function resumePlaybackIfNeeded() {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+      if (playbackStatus !== "playing" || !playerRef.current || !currentSong) {
+        return;
+      }
+
+      attemptResume(0);
+      attemptResume(150);
+      attemptResume(500);
+    }
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        savePlaybackPosition();
+        return;
+      }
+      resumePlaybackIfNeeded();
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("resume", resumePlaybackIfNeeded);
+    window.addEventListener("pageshow", resumePlaybackIfNeeded);
+    window.addEventListener("focus", resumePlaybackIfNeeded);
+
+    return () => {
+      timeoutIds.forEach(clearTimeout);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("resume", resumePlaybackIfNeeded);
+      window.removeEventListener("pageshow", resumePlaybackIfNeeded);
+      window.removeEventListener("focus", resumePlaybackIfNeeded);
+    };
+  }, [playbackStatus, currentSong?.id, savePlaybackPosition]);
+
   useEffect(() => {
     if (currentSong && currentCategory) {
       trackSongStart(currentSong);
@@ -383,6 +456,7 @@ function RadioPlayer() {
     playerVars: {
       autoplay: 1,
       enablejsapi: 1,
+      playsinline: 1,
       origin: window.location.origin
     },
   };
@@ -599,6 +673,7 @@ function RadioPlayer() {
           opts={opts}
           iframeClassName="youtube-player"
           onReady={onReady}
+          onStateChange={onStateChange}
           onEnd={handleSongEnd}
           onError={handlePlayerError}
         />
